@@ -3,6 +3,7 @@ using Newtonsoft.Json;
 using ECommerce.Domain.Commons;
 using ECommerce.Domain.Entities;
 using ECommerce.Data.Configurations;
+using Microsoft.VisualBasic;
 
 namespace ECommerce.Data.Repositories
 {
@@ -34,7 +35,8 @@ namespace ECommerce.Data.Repositories
         }
         public async Task<TEntity> CreateAsync(TEntity entity)
         {
-            await SelectAllAsync();
+            // in this place : you missed give list information as a entities variable
+            var entities = await SelectAllAsync();
             if (entities.Count == 0)
             {
                 entity.Id = 1;
@@ -84,8 +86,10 @@ namespace ECommerce.Data.Repositories
 
         public async Task<TEntity> SelectAsync(Predicate<TEntity> predicate)
         {
-            await SelectAllAsync();
-            return entities.Find(x => predicate(x));
+            // in this place too, you forgot to intialize new "entities" variable. Ok
+            var entities = await SelectAllAsync();
+            // And last "Find" method don't return null . But "FirstOrDefault" null return. Ok
+            return entities.FirstOrDefault(x => predicate(x));
         }
 
         public async Task<TEntity> UpdateAsync(TEntity entity)

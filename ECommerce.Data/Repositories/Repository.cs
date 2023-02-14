@@ -45,14 +45,14 @@ namespace ECommerce.Data.Repositories
 
         public async Task<bool> DeleteAsync(Predicate<TEntity> predicate)
         {
-            TEntity food = await SelectAsync(x => x.Id == id);
+            TEntity entity = await SelectAsync(x => x.Id == id);
 
-            if (food is null)
+            if (entity is null)
             {
                 return false;
             }
 
-            entities.Remove(food);
+            entities.Remove(entity);
 
             string jsonEdition = JsonConvert.SerializeObject(entities);
             File.WriteAllText(dbFile, jsonEdition);

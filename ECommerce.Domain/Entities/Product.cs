@@ -1,12 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using ECommerce.Domain.Commons;
 
 namespace ECommerce.Domain.Entities
 {
-    internal class Product
+    public class Product : Auditable
     {
+        public long CategoryId { get; set;}
+        public string Name { get; set; }
+        public decimal Price { get; set; }
+        public bool CanDeliver { get; set; }
+        public string Description { get; set; }
+        
     }
 }

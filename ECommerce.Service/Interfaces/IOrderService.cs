@@ -1,12 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using ECommerce.Domain.Entities;
+using ECommerce.Service.Helpers;
 
 namespace ECommerce.Service.Interfaces
 {
-    internal class IOrderService
+    public interface IOrderService
     {
+        Response<Task<Order>> AddAsync(Order order);
+        Response<Order> UpdateAsync(long id, Order order);
+        Response<bool> DeleteAsync(long id);
+        Response<Order> GetAsync(long id);
+        Response<List<Order>> GetAllAsync();
     }
 }

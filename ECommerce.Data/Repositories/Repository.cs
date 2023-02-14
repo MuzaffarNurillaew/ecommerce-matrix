@@ -1,6 +1,5 @@
 ﻿using ECommerce.Data.IRepositories;
 using Newtonsoft.Json;
-using ECommerce.
 using ECommerce.Domain.Commons;
 
 namespace ECommerce.Data.Repositories
@@ -10,6 +9,7 @@ namespace ECommerce.Data.Repositories
         private string? dbFile;
         private long lastId;
         private List<TEntity> entities = new List<TEntity>();
+        private long id;
 
         public Repository()
         {

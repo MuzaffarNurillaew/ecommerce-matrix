@@ -1,8 +1,13 @@
-﻿namespace ECommerce.Domain.Entities
+﻿using ECommerce.Domain.Commons;
+
+namespace ECommerce.Domain.Entities
 {
-    public class OrderItem
+    public class OrderItem : Auditable
     {
-        public int ProductId { get; set; }
-        
+        public long OrderId { get; set; }
+        public long ProductId { get; set; }
+        public decimal Quantity { get; set; }
+        public decimal Price { get; set; }
+
     }
 }

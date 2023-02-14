@@ -48,7 +48,7 @@ namespace ECommerce.Service.Services
                     Result = false
                 };
 
-            await repostoryService.DeleteAsync();
+            await repostoryService.DeleteAsync(v => v.Id == id);
             return new Response<bool>
             {
                 StatusCode = 200,

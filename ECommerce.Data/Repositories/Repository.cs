@@ -17,11 +17,19 @@ namespace ECommerce.Data.Repositories
         {
             if (typeof(TEntity) == typeof(Product))
             {
-                dbFile = Constants.PRODUCTPATH;
+                dbFile = Constants.PRODUCT_PATH;
             }
-            else if (typeof(TEntity) == typeof(int))
+            else if (typeof(TEntity) == typeof(User))
             {
-
+                dbFile = Constants.USER_PATH;
+            }
+            else if (typeof(TEntity) == typeof(Payment))
+            {
+                dbFile = Constants.PAYMENT_PATH;
+            }
+            else if (typeof(TEntity) == typeof(Order))
+            {
+                dbFile = Constants.ORDER_PATH;
             }
         }
         public async Task<TEntity> CreateAsync(TEntity entity)
@@ -45,14 +53,14 @@ namespace ECommerce.Data.Repositories
 
         public async Task<bool> DeleteAsync(Predicate<TEntity> predicate)
         {
-            TEntity food = await SelectAsync(x => x.Id == id);
+            TEntity entity = await SelectAsync(x => x.Id == id);
 
-            if (food is null)
+            if (entity is null)
             {
                 return false;
             }
 
-            entities.Remove(food);
+            entities.Remove(entity);
 
             string jsonEdition = JsonConvert.SerializeObject(entities);
             File.WriteAllText(dbFile, jsonEdition);

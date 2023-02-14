@@ -2,8 +2,8 @@
 {
     public enum PaymentType
     {
-        cash,
-        credit_card,
-        online
+        Cash,
+        CreditCard,
+        Online
     }
 }

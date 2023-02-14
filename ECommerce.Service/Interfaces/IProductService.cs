@@ -1,12 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using ECommerce.Domain.Entities;
+using ECommerce.Service.Helpers;
 
 namespace ECommerce.Service.Interfaces
 {
-    internal class IProductService
+    public interface IProductService
     {
+        public Task<Response<Product>> AddAsync(Product product);
+        public Task<Response<Product>> UpdateAsync(long id, Product product);
+        public Task<Response<Product>> GetByIdAsync(long id);
+        public Task<Response<Product>> GetByNameAsync(string name);
+        public Task<Response<List<Product>>> GetAllAsync();
     }
 }

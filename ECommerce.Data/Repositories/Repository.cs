@@ -34,7 +34,8 @@ namespace ECommerce.Data.Repositories
         }
         public async Task<TEntity> CreateAsync(TEntity entity)
         {
-            await SelectAllAsync();
+            // in this place : you missed give list information as a entities variable
+            var entities = await SelectAllAsync();
             if (entities.Count == 0)
             {
                 entity.Id = 1;

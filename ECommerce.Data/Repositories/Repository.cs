@@ -1,5 +1,7 @@
 ﻿using ECommerce.Data.IRepositories;
 using Newtonsoft.Json;
+using ECommerce.
+using ECommerce.Domain.Commons;
 
 namespace ECommerce.Data.Repositories
 {

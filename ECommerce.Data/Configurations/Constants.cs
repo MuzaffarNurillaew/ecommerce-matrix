@@ -2,9 +2,10 @@
 {
     public class Constants
     {
-        public const string ORDERPATH = @"..\..\..\Databases\Orders.json";
-        public const string USERPATH = @"..\..\..\Databases\Users.json";
-        public const string PRODUCTPATH = @"..\..\..\Databases\Products.json";
+        public const string ORDER_PATH = @"..\..\..\Databases\Orders.json";
+        public const string USER_PATH = @"..\..\..\Databases\Users.json";
+        public const string PRODUCT_PATH = @"..\..\..\Databases\Products.json";
+        public const string PAYMENT_PATH = @"..\..\..\Databases\Payments.json";
 
     }
 }

@@ -17,11 +17,19 @@ namespace ECommerce.Data.Repositories
         {
             if (typeof(TEntity) == typeof(Product))
             {
-                dbFile = Constants.PRODUCTPATH;
+                dbFile = Constants.PRODUCT_PATH;
             }
-            else if (typeof(TEntity) == typeof(int))
+            else if (typeof(TEntity) == typeof(User))
             {
-
+                dbFile = Constants.USER_PATH;
+            }
+            else if (typeof(TEntity) == typeof(Payment))
+            {
+                dbFile = Constants.PAYMENT_PATH;
+            }
+            else if (typeof(TEntity) == typeof(Order))
+            {
+                dbFile = Constants.ORDER_PATH;
             }
         }
         public async Task<TEntity> CreateAsync(TEntity entity)

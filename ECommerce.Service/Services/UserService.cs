@@ -1,39 +1,136 @@
-﻿using ECommerce.Domain.Entities;
+﻿using ECommerce.Data.IRepositories;
+using ECommerce.Data.Repositories;
+using ECommerce.Domain.Entities;
 using ECommerce.Service.Helpers;
 using ECommerce.Service.Interfaces;
+using System.Reflection;
+using System.Text;
 
 namespace ECommerce.Service.Services
 {
     internal class UserService : IUserService
     {
-        public Task<Response<User>> CreateAsync(User user)
+        private readonly IRepository<User> repostoryService = new Repository<User>();
+
+        public async Task<Response<User>> CreateAsync(User user)
         {
-            throw new NotImplementedException();
+            var entities = await repostoryService.SelectAllAsync();
+            var model = entities.FirstOrDefault(p => p.Id == user.Id);
+            if (model is null)
+            {
+                return new Response<User>()
+                {
+                    StatusCode = 404,
+                    Message = "Not found",
+                    Result = model
+                };
+            }
+
+            var result = await repostoryService.CreateAsync(user);
+            return new Response<User>()
+            {
+                StatusCode = 201,
+                Message = "Created",
+                Result = result
+            };
         }
 
-        public Task<Response<bool>> DeleteAsync(long id)
+        public async Task<Response<bool>> DeleteAsync(long id)
         {
-            throw new NotImplementedException();
+            var entities = await repostoryService.SelectAllAsync();
+            var model = entities.FirstOrDefault(p => p.Id == id);
+
+            if (model is not null)
+                return new Response<bool>
+                {
+                    StatusCode = 404,
+                    Message = "Not found",
+                    Result = false
+                };
+
+            await repostoryService.DeleteAsync();
+            return new Response<bool>
+            {
+                StatusCode = 200,
+                Message = "OK",
+                Result = true
+            };
         }
 
-        public Task<Response<List<User>>> GetAllAsync()
+        public async Task<Response<List<User>>> GetAllAsync()
         {
-            throw new NotImplementedException();
+            var results = await repostoryService.SelectAllAsync();
+            return new Response<List<User>>()
+            {
+                StatusCode = 200,
+                Message = "OK",
+                Result = results
+            };
         }
 
-        public Task<Response<User>> GetByIdAsync(long id)
+        public async Task<Response<User>> GetByIdAsync(long id)
         {
-            throw new NotImplementedException();
+            var entities = await repostoryService.SelectAllAsync();
+            var model  = entities.FirstOrDefault(p => p.Id == id);
+
+            if (model is null)
+                return new Response<User>()
+                {
+                    StatusCode = 404,
+                    Message = "Not found",
+                    Result = model
+                };
+
+            return new Response<User>()
+            {
+                StatusCode = 200,
+                Message = "OK",
+                Result = model
+            };
+            
         }
 
-        public Task<Response<User>> GetByNameAsync(string name)
+        public async Task<Response<User>> GetByNameAsync(string name)
         {
-            throw new NotImplementedException();
+            var enteties = await repostoryService.SelectAllAsync();
+            var model = enteties.FirstOrDefault(p => p.FirstName == name);
+
+            if (model is null)
+                return new Response<User>()
+                {
+                    StatusCode = 404,
+                    Message = "Not found",
+                    Result = model
+                };
+
+            return new Response<User>()
+            {
+                StatusCode = 200,
+                Message = "OK",
+                Result = model
+            };
         }
 
-        public Task<Response<User>> UpdateAsync(long id, User user)
+        public async Task<Response<User>> UpdateAsync(long id, User user)
         {
-            throw new NotImplementedException();
+            var entities = await repostoryService.SelectAllAsync();
+            var model = entities.FirstOrDefault(p =>p.Id == id);
+
+            if (model is null)
+                return new Response<User>()
+                {
+                    StatusCode = 404,
+                    Message = "Not found",
+                    Result = model
+                };
+
+            var result = await repostoryService.UpdateAsync(user);
+            return new Response<User>()
+            {
+                StatusCode = 200,
+                Message = "OK",
+                Result = model
+            };
         }
     }
 }

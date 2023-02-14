@@ -1,20 +1,23 @@
 ﻿using ECommerce.Data.IRepositories;
 using Newtonsoft.Json;
 using ECommerce.Domain.Commons;
+using ECommerce.Domain.Entities;
+using ECommerce.Data.Configurations;
 
 namespace ECommerce.Data.Repositories
 {
     public class Repository<TEntity> : IRepository<TEntity> where TEntity : Auditable
     {
-        private string? dbFile;
+        private string dbFile;
         private long lastId;
         private List<TEntity> entities = new List<TEntity>();
         private long id;
 
         public Repository()
         {
-            if (typeof(TEntity) == typeof(int))
+            if (typeof(TEntity) == typeof(Product))
             {
+                dbFile = Constants.PRODUCTPATH;
             }
             else if (typeof(TEntity) == typeof(int))
             {
@@ -81,7 +84,7 @@ namespace ECommerce.Data.Repositories
         {
             TEntity objectToUpdate = await SelectAsync(x => x.Id == entity.Id);
 
-            objectToUpdate.LastUpdatedAt = DateTime.UtcNow;
+            objectToUpdate.UpdatedAt = DateTime.UtcNow;
             int index = entities.IndexOf(objectToUpdate);
             entities.RemoveAt(index);
             entities.Insert(index, entity);

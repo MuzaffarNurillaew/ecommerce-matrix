@@ -6,15 +6,18 @@ using ECommerce.Service.Interfaces;
 
 namespace ECommerce.Service.Services
 {
-    internal class UserService : IUserService
+    public class UserService : IUserService
     {
         private readonly IRepository<User> repostoryService = new Repository<User>();
 
         public async Task<Response<User>> CreateAsync(User user)
         {
-            var entities = await repostoryService.SelectAllAsync();
-            var model = entities.FirstOrDefault(p => p.Id == user.Id);
-            if (model is null)
+            var model = await repostoryService.SelectAsync(x => 
+            x.Username == user.Username
+            || x.Email.ToLower() == user.Email.ToLower() 
+            || x.PhoneNumber == user.PhoneNumber);
+
+            if (model is not null)
             {
                 return new Response<User>()
                 {
@@ -78,7 +81,23 @@ namespace ECommerce.Service.Services
                 Message = "OK",
                 Result = model
             };
+        }
 
+        public async Task<Response<User>> GetAsync(Predicate<User> predicate)
+        {
+            var model = await repostoryService.SelectAsync(x => predicate(x));
+
+            if (model is null)
+            {
+                return new Response<User>();
+            }
+
+            return new Response<User>()
+            {
+                StatusCode = 200,
+                Message = "OK",
+                Result = model
+            };
         }
 
         public async Task<Response<User>> GetByNameAsync(string name)

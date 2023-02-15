@@ -1,13 +1,16 @@
 ﻿using ECommerce.Domain.Entities;
+using ECommerce.Service.Interfaces;
+using ECommerce.Service.Services;
 
 namespace ECommerce.Presentation.LoginPageUI
 {
     public class LoginPageUI
     {
+        private IUserService userService = new UserService();
         //classni ichiga funksiya bermasak xatolik beryapti shuning uchun bu funksiya yozilgan
-        public void LoginPage()
+        public async Task<User> LoginPage()
         {
-            while(true)
+            while (true)
             {
                 Console.WriteLine("     Main Menu   ");
                 Console.WriteLine("1.Sign up");
@@ -18,8 +21,9 @@ namespace ECommerce.Presentation.LoginPageUI
                 int number = int.Parse(Console.ReadLine());
 
                 // Sign Up 
-                if(number == 1)
+                if (number == 1)
                 {
+                signup:
                     Console.Clear();
                     Console.WriteLine("     Sign up ");
 
@@ -37,7 +41,7 @@ namespace ECommerce.Presentation.LoginPageUI
 
                     Console.Write("Enter your phone number: ");
                     string phoneNumber = Console.ReadLine();
-                    password10:
+                password10:
                     Console.Write("Enter a new password: ");
                     string password1 = Console.ReadLine();
 
@@ -47,7 +51,7 @@ namespace ECommerce.Presentation.LoginPageUI
                     // here the password is checked, if it's wrong, you can re-enter it. Sorry now I have to use goto
                     if (password1 != password2)
                     {
-                        Console.Clear() ;
+                        Console.Clear();
                         Console.WriteLine("The passwords you entered do not match. Please re-enter the password");
                         goto password10;
                     }
@@ -57,25 +61,55 @@ namespace ECommerce.Presentation.LoginPageUI
                         FirstName = name,
                         LastName = surname,
                         Email = email,
+                        Username = login,
                         PhoneNumber = phoneNumber,
                         Password = password1
                     };
                     // bu yerini keyin davom etadi chunki server bilan ulash kere
+
+                    var response = await userService.CreateAsync(person);
+
+                    if (response.StatusCode == 404)
+                    {
+                        Console.WriteLine("Bunaqa user mavjud");
+                        goto signup;
+                    }
+                    else
+                    {
+                        Console.WriteLine("Created\n");
+                        return person;
+                    }
                 }
 
                 //Sign in
-                else if(number == 2)
+                else if (number == 2)
                 {
+                    login:
                     Console.WriteLine("     Sign in ");
                     Console.Write("Enter your Login or Email: ");
-                    string loginoremail = Console.ReadLine() ;
+                    string loginoremail = Console.ReadLine();
                     Console.Write("Enter your password: ");
-                    string password = Console.ReadLine() ;
+                    string password = Console.ReadLine();
 
                     //serverga ulanadigan joyi qoldi
+
+                    var user = await userService.GetAsync(x => x.Username == loginoremail || x.Email == loginoremail);
+                    if (user.StatusCode == 404)
+                    {
+                        if (password == user.Result.Password)
+                        {
+                            Console.WriteLine("Entered");
+                            return user.Result;
+                        }
+                        else
+                        {
+                            Console.WriteLine("Incorrect password or login.");
+                            goto login;
+                        }
+                    }
                 }
             }
-            
+
         }
     }
 }

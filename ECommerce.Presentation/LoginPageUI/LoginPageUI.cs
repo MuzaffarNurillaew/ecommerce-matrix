@@ -77,7 +77,7 @@ namespace ECommerce.Presentation.LoginPageUI
                     else
                     {
                         Console.WriteLine("Created\n");
-                        //return person;
+                        return person;
                     }
                 }
 
@@ -100,7 +100,7 @@ namespace ECommerce.Presentation.LoginPageUI
                         if (password == user.Result.Password)
                         {
                             Console.WriteLine("Entered");
-                            //return user.Result;
+                            return user.Result;
                         }
                         else
                         {

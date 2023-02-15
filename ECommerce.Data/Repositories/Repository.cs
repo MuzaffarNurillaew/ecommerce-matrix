@@ -49,7 +49,7 @@ namespace ECommerce.Data.Repositories
             {
                 entity.Id = entities[entities.Count - 1].Id + 1;
             }
-
+            entity.CreatedAt = DateTime.UtcNow;
             entities.Add(entity);
             string jsonEdition = JsonConvert.SerializeObject(entities);
             File.WriteAllText(dbFile, jsonEdition);

@@ -50,7 +50,8 @@ namespace ECommerce.Presentation.CustomerUI
                 {
 
                 }
-            };
+            }
+        }
             //      LOGIKA
             public async Task OrderNewProduct()
             {
@@ -60,4 +61,3 @@ namespace ECommerce.Presentation.CustomerUI
 
         }
     }
-}

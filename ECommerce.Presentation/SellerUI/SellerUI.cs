@@ -2,18 +2,20 @@
 using ECommerce.Domain.Enums;
 using ECommerce.Service.Interfaces;
 using ECommerce.Service.Services;
-using System;
-using System.ComponentModel;
-using System.Transactions;
 
 namespace ECommerce.Presentation.SellerUI
 {
     public class SellerUI
     {
         private IProductService productService = new ProductService();
+        private User user;
+        public SellerUI(User user1)
+        {
+            user = user1;
+        }
         public async Task Seller()
         {
-            MainMenu:
+        MainMenu:
             while (true)
             {
                 Console.WriteLine("1.Create ");
@@ -27,32 +29,32 @@ namespace ECommerce.Presentation.SellerUI
 
                 if (number == 1)
                 {
-                    CreateProductAsync();
+                    await CreateProductAsync();
 
                     Console.Clear();
                     goto MainMenu;
                 }
                 else if (number == 2)
                 {
-                    UpdateProductAsync();
+                    await UpdateProductAsync();
 
                     Console.Clear();
                     goto MainMenu;
                 }
                 else if (number == 3)
                 {
-                    GetproductAsync();
+                    await GetproductAsync();
 
                     Console.Clear();
                     goto MainMenu;
                 }
                 else if (number == 4)
                 {
-                    GetAllProductAsync();
+                    await GetAllProductAsync();
                 }
-                else if(number == 5)
+                else if (number == 5)
                 {
-                    DeleteProductAsync();
+                    await DeleteProductAsync();
                 }
             }
 
@@ -60,22 +62,22 @@ namespace ECommerce.Presentation.SellerUI
 
         public async Task CreateProductAsync()
         {
-            getname:
+        getname:
             Console.Write("Enter product name: ");
             string name = Console.ReadLine();
 
             // bir xil ismliligiga teekshiradi
             var response1 = await productService.GetByNameAsync(name);
 
-            if (response1.StatusCode == 404)
+            if (response1.StatusCode != 404)
             {
-                Console.WriteLine(response1.Message);
+                Console.WriteLine("Already exists.");
                 goto getname;
             }
 
             Console.Write("Enter product Price: ");
             decimal price = decimal.Parse(Console.ReadLine());
-            Console.Write("Enter product Discription: ");
+            Console.Write("Enter product Description: ");
             string discription = Console.ReadLine();
 
             Console.WriteLine($"1.Food\n" +
@@ -88,20 +90,20 @@ namespace ECommerce.Presentation.SellerUI
                         $"8.Toys\n" +
                         $"9.Books\n" +
                         $"10.Others\n");
+
             Console.Write("Enter the number of the new category: ");
             int choice = int.Parse(Console.ReadLine());
+
+            Console.Write("Enter the QR code of the product: ");
+            string qrCode = Console.ReadLine();
 
             Console.Write("Can we deliver this product? {Yes, y, YES for Yes} or {Any other for Not}: ");
             string delivery = Console.ReadLine();
             bool candelivery = false;
-            
+
             if (delivery.ToLower() == "yes" || delivery.ToLower() == "y")
             {
                 candelivery = true;
-            }
-            else  
-            {
-                candelivery = false;
             }
 
             var model = new Product
@@ -111,6 +113,8 @@ namespace ECommerce.Presentation.SellerUI
                 Description = discription,
                 Category = (ProductCategory)(choice * 10),
                 CanDeliver = candelivery,
+                OwnerId = user.Id,
+                QRCode = qrCode,
                 CreatedAt = DateTime.Now,
             };
 
@@ -120,66 +124,76 @@ namespace ECommerce.Presentation.SellerUI
         // Update function
         public async Task UpdateProductAsync()
         {
-            UpdatePro:
-            Console.Write("Enter the id of the product you want to update: ");
-            int numid = int.Parse(Console.ReadLine());
-            var oldmodel = await productService.GetByIdAsync(numid);
-            if(oldmodel.StatusCode== 404) 
-            {
-                Console.WriteLine(oldmodel.Message);
-                Console.Clear();
-                goto UpdatePro;
-            }
-            Console.WriteLine($"Name: {oldmodel.Result.Name} Price: {oldmodel.Result.Price} Description: {oldmodel.Result.Description}");
-            Console.WriteLine($"Category: {oldmodel.Result.Category} QRCode: {oldmodel.Result.QRCode} {oldmodel.Result.CanDeliver}");
-
-            Updatemenu:
-            Console.WriteLine();
-            Console.WriteLine("1.Name Update ");
-            Console.WriteLine("2.Price Update ");
-            Console.WriteLine("3.Description Update ");
-            Console.WriteLine("4.Category Update ");
-            Console.WriteLine("5.CanDeliver Update ");
-            Console.WriteLine("6.QRCode Update ");
-            Console.WriteLine("7.Return Main menu");
-            Console.WriteLine();
-            Console.Write("Enter the part number you want to update: ");
-
-            int num = int.Parse(Console.ReadLine());
-            
-            
-            
             while (true)
             {
+                Console.Write("Enter the id of the product you want to update, \"Q\" to exit: ");
+                int numid;
+                try
+                {
+                    numid = int.Parse(Console.ReadLine());
+                }
+                catch
+                {
+                    return;
+                }
+
+                var oldmodel = await productService.GetByIdAsync(numid);
+
+                if (oldmodel.StatusCode == 404)
+                {
+                    Console.WriteLine(oldmodel.Message);
+                    Console.Clear();
+                }
+
+                Console.WriteLine($"Name: {oldmodel.Result.Name} Price: {oldmodel.Result.Price} Description: {oldmodel.Result.Description}");
+                Console.WriteLine($"Category: {oldmodel.Result.Category} QRCode: {oldmodel.Result.QRCode} {oldmodel.Result.CanDeliver}");
+
+                Console.WriteLine();
+                Console.WriteLine("1.Name Update ");
+                Console.WriteLine("2.Price Update ");
+                Console.WriteLine("3.Description Update ");
+                Console.WriteLine("4.Category Update ");
+                Console.WriteLine("5.CanDeliver Update ");
+                Console.WriteLine("6.QRCode Update ");
+                Console.WriteLine("7.Return Main menu");
+                Console.WriteLine();
+                Console.Write("Enter the sequence of numbers separated by space to update: ");
+
+                int[] num = Array.ConvertAll(Console.ReadLine().Split(), int.Parse);
+
+                //return Main menu
+                if (Array.IndexOf(num, 7) != -1)
+                {
+                    Console.Clear();
+                    return;
+                }
+
                 //Name Update 
-                if (num == 1)
+                if (Array.IndexOf(num, 1) != -1)
                 {
                     Console.Write("Enter product new name: ");
                     oldmodel.Result.Name = Console.ReadLine();
                     Console.Clear();
-                    goto Updatemenu;
                 }
 
                 // Price update
-                if (num == 2)
+                if (Array.IndexOf(num, 2) != -1)
                 {
                     Console.Write("Enter product new price: ");
                     oldmodel.Result.Price = decimal.Parse(Console.ReadLine());
                     Console.Clear();
-                    goto Updatemenu;
                 }
 
                 //discription update
-                if(num == 3)
+                if (Array.IndexOf(num, 3) != -1)
                 {
                     Console.Write("Enter product new discription: ");
                     oldmodel.Result.Description = Console.ReadLine();
                     Console.Clear();
-                    goto Updatemenu;
                 }
 
                 //Catecgoryid update
-                if(num == 4)
+                if (Array.IndexOf(num, 4) != -1)
                 {
                     Console.WriteLine($"1.Food\n" +
                         $"2.Electronics\n" +
@@ -193,17 +207,16 @@ namespace ECommerce.Presentation.SellerUI
                         $"10.Others\n");
                     Console.Write("Enter the number of the new category: ");
                     int choice = int.Parse(Console.ReadLine());
-                    oldmodel.Result.Category = (ProductCategory) (choice * 10);
+                    oldmodel.Result.Category = (ProductCategory)(choice * 10);
                     Console.Clear();
-                    goto Updatemenu;
                 }
 
                 // Deliver update
-                if(num == 5)
+                if (Array.IndexOf(num, 5) != -1)
                 {
                     Console.Write("Can we deliver this product? Yes or Not: ");
                     string delivery = Console.ReadLine();
-                    
+
                     if (delivery.ToLower() == "yes")
                     {
                         oldmodel.Result.CanDeliver = true;
@@ -212,37 +225,32 @@ namespace ECommerce.Presentation.SellerUI
                     {
                         oldmodel.Result.CanDeliver = false;
                     }
-                    Console.Clear() ;
-                    goto Updatemenu;
+                    Console.Clear();
                 }
 
-                if(num == 6)
+                if (Array.IndexOf(num, 6) != -1)
                 {
                     Console.WriteLine("Enter product new QRCode: ");
                     oldmodel.Result.QRCode = Console.ReadLine();
                     Console.Clear();
-                    goto Updatemenu;
-                }
-                //return Main menu
-                if(num==7)
-                {
-                    Console.Clear();
-                    break;
                 }
 
+                await productService.UpdateAsync(numid, oldmodel.Result);
+                Console.WriteLine("Successfully updated.");
+
             }
-            
-            
+
+
         }
-         
+
         public async Task GetproductAsync()
         {
-            Get:
+        Get:
             Console.WriteLine($"1.Search by id\n" +
-                $"2.Search by name\n" );
+                $"2.Search by name\n");
             Console.Write("Enter the part number you want to search: ");
             int number = int.Parse(Console.ReadLine());
-            while(true)
+            while (true)
             {
                 if (number == 1)
                 {
@@ -259,7 +267,7 @@ namespace ECommerce.Presentation.SellerUI
                     Console.ReadKey();
                     goto Get;
                 }
-                else if(number == 2)
+                else if (number == 2)
                 {
                     Console.Write("Enter the product name you want to search for: ");
                     string namesearch = Console.ReadLine();
@@ -274,15 +282,15 @@ namespace ECommerce.Presentation.SellerUI
                     goto Get;
                 }
             }
-            
+
         }
 
         public async Task GetAllProductAsync()
         {
             while (true)
             {
-                Back:
-                Console.Clear() ;
+            Back:
+                Console.Clear();
                 Console.WriteLine($"1.Food\n" +
                            $"2.Electronics\n" +
                            $"3.Clothes\n" +
@@ -303,11 +311,11 @@ namespace ECommerce.Presentation.SellerUI
                     goto Back;
                 }
 
-                if (choice== 1)
+                if (choice == 1)
                 {
-                    foreach(var item in model.Result)
+                    foreach (var item in model.Result)
                     {
-                        if(item.Category == ProductCategory.Food)
+                        if (item.Category == ProductCategory.Food)
                         {
                             Console.WriteLine("====================================================================================");
                             Console.Write($"Id: {item.Id} Name: {item.Name} Description: {item.Description} \n" +
@@ -468,11 +476,11 @@ namespace ECommerce.Presentation.SellerUI
 
         public async Task DeleteProductAsync()
         {
-            Delete:
+        Delete:
             Console.Write("Enter the id of the product you want to delete: ");
-            int deleteid = int.Parse( Console.ReadLine() );
+            int deleteid = int.Parse(Console.ReadLine());
             var model = productService.DeleteByIdAsync(deleteid);
-            if(model.Result.Result == true)
+            if (model.Result.Result == true)
             {
                 Console.WriteLine(model.Result.Message);
             }

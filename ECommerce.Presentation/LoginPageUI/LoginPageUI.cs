@@ -1,4 +1,5 @@
 ﻿using ECommerce.Domain.Entities;
+using ECommerce.Domain.Enums;
 using ECommerce.Service.Interfaces;
 using ECommerce.Service.Services;
 
@@ -41,6 +42,18 @@ namespace ECommerce.Presentation.LoginPageUI
                     Console.Write("Enter your email: ");
                     string email = Console.ReadLine();
 
+                    Console.Write("Enter your role:\n" +
+                        "1. Customer\n" +
+                        "2. Merchant\n");
+
+                    string roleChoice = Console.ReadLine();
+                    UserRole role = UserRole.Customer;
+
+                    if (roleChoice == "2")
+                    {
+                        role = UserRole.Merchant;
+                    }
+
                     Console.Write("Enter your phone number: ");
                     string phoneNumber = Console.ReadLine();
                 password10:
@@ -64,6 +77,7 @@ namespace ECommerce.Presentation.LoginPageUI
                         LastName = surname,
                         Email = email,
                         Username = login,
+                        Role = role,
                         PhoneNumber = phoneNumber,
                         Password = password1
                     };

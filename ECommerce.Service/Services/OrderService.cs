@@ -1,6 +1,7 @@
 ﻿using ECommerce.Data.IRepositories;
 using ECommerce.Data.Repositories;
 using ECommerce.Domain.Entities;
+using ECommerce.Domain.Enums;
 using ECommerce.Service.Helpers;
 using ECommerce.Service.Interfaces;
 
@@ -14,14 +15,20 @@ namespace ECommerce.Service.Services
         {
             var payment = await paymentRepository.SelectAsync(x => x.OrderId == order.PaymentId);
 
-            if (payment is null)
+            // to'liq narxini hisoblash
+            foreach (var item in order.Items)
             {
-                return new Response<Order>()
-                {
-                    Message = "Payment is not done."
-                };
+                order.TotalAmount += item.Price;
+            }
+
+            // to'lov qilingan bo'lsa pending qilib qo'yamiz
+            if  (payment is not null)
+            {
+                order.OrderStatus = OrderStatus.Pending;
+                order.PaymentId = payment.Id;
             }
             await orderRepository.CreateAsync(order);
+            
             return new Response<Order>()
             {
                 StatusCode = 200,

@@ -22,7 +22,7 @@ namespace ECommerce.Presentation
             }
             else if (currentUser.Role == UserRole.Customer)
             {
-
+                Console.WriteLine("Customer UI chiqishi kerak edi.");
             }
         }
     }

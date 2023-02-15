@@ -12,7 +12,7 @@ namespace ECommerce.Service.Services
         private readonly IRepository<Payment> paymentRepository = new Repository<Payment>();
         public async Task<Response<Order>> AddAsync(Order order)
         {
-            var payment = await paymentRepository.SelectAsync(x => x.OrderId == order.Id);
+            var payment = await paymentRepository.SelectAsync(x => x.OrderId == order.PaymentId);
 
             if (payment is null)
             {
@@ -50,26 +50,52 @@ namespace ECommerce.Service.Services
             };
         }
 
-        public async Task<Response<List<Order>>> GetAllAsync(Predicate<Order>? predicate = null)
+        public async Task<Response<List<Order>>> GetAllAsync(Predicate<Order> predicate = null)
         {
-            var result = await orderRepository.SelectAllAsync(x => predicate(x));
+            List<Order> result = await orderRepository.SelectAllAsync(x => predicate(x));
+
+            return new Response<List<Order>>()
+            {
+                StatusCode = 200,
+                Message = "Success",
+                Result = result
+            };
+        }
+
+        public async Task<Response<Order>> GetAsync(long id)
+        {
+            var result = await orderRepository.SelectAsync(x => x.Id == id);
+
+            if (result is null)
+            {
+                return new Response<Order>();
+            }
+
+            return new Response<Order>
+            {
+                StatusCode = 200,
+                Message = "Success",
+                Result = result
+            };
+        }
+
+        public async Task<Response<Order>> UpdateAsync(long id, Order order)
+        {
+            var order1 = await orderRepository.SelectAsync(x => x.Id == id);
+
+            if (order1 is null)
+            {
+                return new Response<Order>();
+            }
+
+            await orderRepository.UpdateAsync(order);
 
             return new Response<Order>()
             {
                 StatusCode = 200,
                 Message = "Success",
-                Result = result;
-            }
-        }
-
-        public Response<Order> GetAsync(long id)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Response<Order> UpdateAsync(long id, Order order)
-        {
-            throw new NotImplementedException();
+                Result = order1
+            };
         }
     }
 }

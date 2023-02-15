@@ -42,7 +42,7 @@ namespace ECommerce.Presentation.SellerUI
             int categoryid = int.Parse(Console.ReadLine());
             Console.Write("Can we deliver this product? Yes or Not: ");
             string delivery = Console.ReadLine();
-            bool candelivery;
+            bool candelivery = false;
             if (delivery.ToLower() == "yes")
             {
                 candelivery = true;

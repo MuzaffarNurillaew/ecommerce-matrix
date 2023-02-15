@@ -6,10 +6,10 @@ namespace ECommerce.Service.Interfaces
 {
     public interface IOrderService
     {
-        Response<Task<Order>> AddAsync(Order order);
-        Response<Order> UpdateAsync(long id, Order order);
-        Response<bool> DeleteAsync(long id);
-        Response<Order> GetAsync(long id);
-        Response<List<Order>> GetAllAsync();
+        Task<Response<Order>> AddAsync(Order order);
+        Task<Response<Order>> UpdateAsync(long id, Order order);
+        Task<Response<bool>> DeleteAsync(long id);
+        Task<Response<Order>> GetAsync(long id);
+        Task<Response<List<Order>>> GetAllAsync(Predicate<Order> predicate = null);
     }
 }

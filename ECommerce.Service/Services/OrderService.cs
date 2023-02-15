@@ -1,4 +1,7 @@
-﻿using ECommerce.Domain.Entities;
+﻿using ECommerce.Data.IRepositories;
+using ECommerce.Data.Repositories;
+using ECommerce.Domain.Entities;
+using ECommerce.Domain.Enums;
 using ECommerce.Service.Helpers;
 using ECommerce.Service.Interfaces;
 
@@ -6,29 +9,100 @@ namespace ECommerce.Service.Services
 {
     public class OrderService : IOrderService
     {
-        public Response<Task<Order>> AddAsync(Order order)
+        private readonly IRepository<Order> orderRepository = new Repository<Order>();
+        private readonly IRepository<Payment> paymentRepository = new Repository<Payment>();
+        public async Task<Response<Order>> AddAsync(Order order)
         {
-            throw new NotImplementedException();
+            var payment = await paymentRepository.SelectAsync(x => x.OrderId == order.PaymentId);
+
+            // to'liq narxini hisoblash
+            foreach (var item in order.Items)
+            {
+                order.TotalAmount += item.Price;
+            }
+
+            // to'lov qilingan bo'lsa pending qilib qo'yamiz
+            if  (payment is not null)
+            {
+                order.OrderStatus = OrderStatus.Pending;
+                order.PaymentId = payment.Id;
+            }
+            await orderRepository.CreateAsync(order);
+            
+            return new Response<Order>()
+            {
+                StatusCode = 200,
+                Message = "Success",
+                Result = order
+            };
         }
 
-        public Response<bool> DeleteAsync(long id)
+        public async Task<Response<bool>> DeleteAsync(long id)
         {
-            throw new NotImplementedException();
+            var order = await orderRepository.SelectAsync(x => x.Id == id);
+
+            if (order is null)
+            {
+                return new Response<bool>();
+            }
+
+            await paymentRepository.DeleteAsync(x => x.OrderId == id);
+            await orderRepository.DeleteAsync(x => x.Id == id);
+
+            return new Response<bool>()
+            {
+                StatusCode = 200,
+                Message = "Success",
+               Result = true
+            };
         }
 
-        public Response<List<Order>> GetAllAsync()
+        public async Task<Response<List<Order>>> GetAllAsync(Predicate<Order> predicate = null)
         {
-            throw new NotImplementedException();
+            List<Order> result = await orderRepository.SelectAllAsync(x => predicate(x));
+
+            return new Response<List<Order>>()
+            {
+                StatusCode = 200,
+                Message = "Success",
+                Result = result
+            };
         }
 
-        public Response<Order> GetAsync(long id)
+        public async Task<Response<Order>> GetAsync(long id)
         {
-            throw new NotImplementedException();
+            var result = await orderRepository.SelectAsync(x => x.Id == id);
+
+            if (result is null)
+            {
+                return new Response<Order>();
+            }
+
+            return new Response<Order>
+            {
+                StatusCode = 200,
+                Message = "Success",
+                Result = result
+            };
         }
 
-        public Response<Order> UpdateAsync(long id, Order order)
+        public async Task<Response<Order>> UpdateAsync(long id, Order order)
         {
-            throw new NotImplementedException();
+            var order1 = await orderRepository.SelectAsync(x => x.Id == id);
+
+            if (order1 is null)
+            {
+                return new Response<Order>();
+            }
+
+            await orderRepository.UpdateAsync(order);
+
+            return new Response<Order>()
+            {
+                StatusCode = 200,
+                Message = "Success",
+                Result = order1
+            };
         }
     }
 }

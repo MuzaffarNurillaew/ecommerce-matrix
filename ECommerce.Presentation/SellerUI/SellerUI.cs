@@ -10,7 +10,7 @@ namespace ECommerce.Presentation.SellerUI
     public class SellerUI
     {
         private IProductService productService = new ProductService();
-        public void Seller()
+        public async Task Seller()
         {
             while (true)
             {
@@ -20,7 +20,7 @@ namespace ECommerce.Presentation.SellerUI
                 Console.WriteLine("4.GetAll ");
                 Console.WriteLine("5.Delete ");
                 Console.WriteLine();
-                Console.WriteLine("Enter the number of your chosen department: ");
+                Console.Write("Enter the number of your chosen department: ");
                 int number = int.Parse(Console.ReadLine());
 
                 if (number == 1)

@@ -1,5 +1,4 @@
-﻿
-using ECommerce.Domain.Entities;
+﻿using ECommerce.Domain.Entities;
 using ECommerce.Domain.Enums;
 using ECommerce.Service.Interfaces;
 using ECommerce.Service.Services;
@@ -33,7 +32,7 @@ namespace ECommerce.Presentation.SellerUI
                 }
                 else if (number == 3)
                 {
-
+                    Getproduct();
                 }
             }
 

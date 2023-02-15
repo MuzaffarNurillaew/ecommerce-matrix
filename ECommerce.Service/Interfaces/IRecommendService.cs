@@ -5,6 +5,7 @@ namespace ECommerce.Service.Interfaces
 {
     public interface IRecommendService
     {
-        Task<Response<List<Product>> 
+        Task<Response<List<Product>>> RecommendWithoutInfo();
+        Task<Response<List<Product>>> RecommendBasedOn(long id);
     }
 }

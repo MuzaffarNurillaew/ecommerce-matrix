@@ -7,6 +7,6 @@ namespace ECommerce.Domain.Entities
     {
         public long OrderId { get; set; }
         public PaymentType PaymentType { get; set; }
-
+        public decimal Amount { get; set; }
     }
 }

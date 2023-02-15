@@ -2,6 +2,8 @@
 using ECommerce.Domain.Enums;
 using ECommerce.Service.Interfaces;
 using ECommerce.Service.Services;
+using System;
+using System.ComponentModel;
 using System.Transactions;
 
 namespace ECommerce.Presentation.SellerUI
@@ -11,6 +13,7 @@ namespace ECommerce.Presentation.SellerUI
         private IProductService productService = new ProductService();
         public async Task Seller()
         {
+            MainMenu:
             while (true)
             {
                 Console.WriteLine("1.Create ");
@@ -24,21 +27,38 @@ namespace ECommerce.Presentation.SellerUI
 
                 if (number == 1)
                 {
-                    CreateProduct();
+                    CreateProductAsync();
+
+                    Console.Clear();
+                    goto MainMenu;
                 }
                 else if (number == 2)
                 {
-                    UpdateProduct();
+                    UpdateProductAsync();
+
+                    Console.Clear();
+                    goto MainMenu;
                 }
                 else if (number == 3)
                 {
-                    Getproduct();
+                    GetproductAsync();
+
+                    Console.Clear();
+                    goto MainMenu;
+                }
+                else if (number == 4)
+                {
+                    GetAllProductAsync();
+                }
+                else if(number == 5)
+                {
+                    DeleteProductAsync();
                 }
             }
 
         }
 
-        public async Task CreateProduct()
+        public async Task CreateProductAsync()
         {
             getname:
             Console.Write("Enter product name: ");
@@ -98,7 +118,7 @@ namespace ECommerce.Presentation.SellerUI
         }
 
         // Update function
-        public async Task UpdateProduct()
+        public async Task UpdateProductAsync()
         {
             UpdatePro:
             Console.Write("Enter the id of the product you want to update: ");
@@ -215,7 +235,7 @@ namespace ECommerce.Presentation.SellerUI
             
         }
          
-        public async Task Getproduct()
+        public async Task GetproductAsync()
         {
             Get:
             Console.WriteLine($"1.Search by id\n" +
@@ -229,6 +249,10 @@ namespace ECommerce.Presentation.SellerUI
                     Console.Write("Enter the product id you want to search for: ");
                     int num = int.Parse(Console.ReadLine());
                     var model = await productService.GetByIdAsync(num);
+                    if (model.StatusCode == 404)
+                    {
+                        Console.WriteLine(model.Message);
+                    }
                     Console.WriteLine(value: $"Name: {model.Result.Name} Price: {model.Result.Price} Description: {model.Result.Description}");
                     Console.WriteLine($"Category: {model.Result.Category} QRCode: {model.Result.QRCode} {model.Result.CanDeliver}");
 
@@ -239,10 +263,224 @@ namespace ECommerce.Presentation.SellerUI
                 {
                     Console.Write("Enter the product name you want to search for: ");
                     string namesearch = Console.ReadLine();
-
+                    var model = await productService.GetByNameAsync(namesearch);
+                    if (model.StatusCode == 404)
+                    {
+                        Console.WriteLine(model.Message);
+                    }
+                    Console.WriteLine(value: $"Name: {model.Result.Name} Price: {model.Result.Price} Description: {model.Result.Description}");
+                    Console.WriteLine($"Category: {model.Result.Category} QRCode: {model.Result.QRCode} {model.Result.CanDeliver}");
+                    Console.ReadKey();
+                    goto Get;
                 }
             }
             
+        }
+
+        public async Task GetAllProductAsync()
+        {
+            while (true)
+            {
+                Back:
+                Console.Clear() ;
+                Console.WriteLine($"1.Food\n" +
+                           $"2.Electronics\n" +
+                           $"3.Clothes\n" +
+                           $"4.Accesories\n" +
+                           $"5.Furnitures\n" +
+                           $"6.Perfumes\n" +
+                           $"7.Souviners\n" +
+                           $"8.Toys\n" +
+                           $"9.Books\n" +
+                           $"10.Others\n");
+                Console.Write("Enter the number of the  category: ");
+                int choice = int.Parse(Console.ReadLine());
+
+                var model = await productService.GetAllAsync();
+                if (model.StatusCode == 404)
+                {
+                    Console.WriteLine(model.Message);
+                    goto Back;
+                }
+
+                if (choice== 1)
+                {
+                    foreach(var item in model.Result)
+                    {
+                        if(item.Category == ProductCategory.Food)
+                        {
+                            Console.WriteLine("====================================================================================");
+                            Console.Write($"Id: {item.Id} Name: {item.Name} Description: {item.Description} \n" +
+                                $"Price: {item.Price} QRCode: {item.QRCode} Category: {item.Category} Can we deliver: {item.CanDeliver}\n" +
+                                $"CreateAtTime: {item.CreatedAt}");
+                        }
+
+                    }
+                    Console.ReadKey();
+                    goto Back;
+                }
+                else if (choice == 2)
+                {
+                    foreach (var item in model.Result)
+                    {
+                        if (item.Category == ProductCategory.Electronics)
+                        {
+                            Console.WriteLine("====================================================================================");
+                            Console.Write($"Id: {item.Id} Name: {item.Name} Description: {item.Description} \n" +
+                                $"Price: {item.Price} QRCode: {item.QRCode} Category: {item.Category} Can we deliver: {item.CanDeliver}\n" +
+                                $"CreateAtTime: {item.CreatedAt}");
+                        }
+
+                    }
+                    Console.ReadKey();
+                    goto Back;
+                }
+                else if (choice == 3)
+                {
+                    foreach (var item in model.Result)
+                    {
+                        if (item.Category == ProductCategory.Clothes)
+                        {
+                            Console.WriteLine("====================================================================================");
+                            Console.Write($"Id: {item.Id} Name: {item.Name} Description: {item.Description} \n" +
+                                $"Price: {item.Price} QRCode: {item.QRCode} Category: {item.Category} Can we deliver: {item.CanDeliver}\n" +
+                                $"CreateAtTime: {item.CreatedAt}");
+                        }
+
+                    }
+                    Console.ReadKey();
+                    goto Back;
+                }
+                else if (choice == 4)
+                {
+                    foreach (var item in model.Result)
+                    {
+                        if (item.Category == ProductCategory.Accesories)
+                        {
+                            Console.WriteLine("====================================================================================");
+                            Console.WriteLine($"Id: {item.Id} Name: {item.Name} Description: {item.Description} \n" +
+                                $"Price: {item.Price} QRCode: {item.QRCode} Category: {item.Category} Can we deliver: {item.CanDeliver}\n" +
+                                $"CreateAtTime: {item.CreatedAt}");
+                        }
+
+                    }
+                    Console.ReadKey();
+                    goto Back;
+                }
+                else if (choice == 5)
+                {
+                    foreach (var item in model.Result)
+                    {
+                        if (item.Category == ProductCategory.Furnitures)
+                        {
+                            Console.WriteLine("====================================================================================");
+                            Console.WriteLine($"Id: {item.Id} Name: {item.Name} Description: {item.Description} \n" +
+                                $"Price: {item.Price} QRCode: {item.QRCode} Category: {item.Category} Can we deliver: {item.CanDeliver}\n" +
+                                $"CreateAtTime: {item.CreatedAt}");
+                        }
+
+                    }
+                    Console.ReadKey();
+                    goto Back;
+                }
+                else if (choice == 6)
+                {
+                    foreach (var item in model.Result)
+                    {
+                        if (item.Category == ProductCategory.Perfumes)
+                        {
+                            Console.WriteLine("====================================================================================");
+                            Console.WriteLine($"Id: {item.Id} Name: {item.Name} Description: {item.Description} \n" +
+                                $"Price: {item.Price} QRCode: {item.QRCode} Category: {item.Category} Can we deliver: {item.CanDeliver}\n" +
+                                $"CreateAtTime: {item.CreatedAt}");
+                        }
+
+                    }
+                    Console.ReadKey();
+                    goto Back;
+                }
+                else if (choice == 7)
+                {
+                    foreach (var item in model.Result)
+                    {
+                        if (item.Category == ProductCategory.Souviners)
+                        {
+                            Console.WriteLine("====================================================================================");
+                            Console.WriteLine($"Id: {item.Id} Name: {item.Name} Description: {item.Description} \n" +
+                                $"Price: {item.Price} QRCode: {item.QRCode} Category: {item.Category} Can we deliver: {item.CanDeliver}\n" +
+                                $"CreateAtTime: {item.CreatedAt}");
+                        }
+
+                    }
+                    Console.ReadKey();
+                    goto Back;
+                }
+                else if (choice == 8)
+                {
+                    foreach (var item in model.Result)
+                    {
+                        if (item.Category == ProductCategory.Toys)
+                        {
+                            Console.WriteLine("====================================================================================");
+                            Console.WriteLine($"Id: {item.Id} Name: {item.Name} Description: {item.Description} \n" +
+                                $"Price: {item.Price} QRCode: {item.QRCode} Category: {item.Category} Can we deliver: {item.CanDeliver}\n" +
+                                $"CreateAtTime: {item.CreatedAt}");
+                        }
+
+                    }
+                    Console.ReadKey();
+                    goto Back;
+                }
+                else if (choice == 9)
+                {
+                    foreach (var item in model.Result)
+                    {
+                        if (item.Category == ProductCategory.Books)
+                        {
+                            Console.WriteLine("====================================================================================");
+                            Console.WriteLine($"Id: {item.Id} Name: {item.Name} Description: {item.Description} \n" +
+                                $"Price: {item.Price} QRCode: {item.QRCode} Category: {item.Category} Can we deliver: {item.CanDeliver}\n" +
+                                $"CreateAtTime: {item.CreatedAt}");
+                        }
+
+                    }
+                    Console.ReadKey();
+                    goto Back;
+                }
+                else if (choice == 10)
+                {
+                    foreach (var item in model.Result)
+                    {
+                        if (item.Category == ProductCategory.Other)
+                        {
+                            Console.WriteLine("====================================================================================");
+                            Console.WriteLine($"Id: {item.Id} Name: {item.Name} Description: {item.Description} \n" +
+                                $"Price: {item.Price} QRCode: {item.QRCode} Category: {item.Category} Can we deliver: {item.CanDeliver}\n" +
+                                $"CreateAtTime: {item.CreatedAt}");
+                        }
+
+                    }
+                    Console.ReadKey();
+                    goto Back;
+                }
+            }
+        }
+
+        public async Task DeleteProductAsync()
+        {
+            Delete:
+            Console.Write("Enter the id of the product you want to delete: ");
+            int deleteid = int.Parse( Console.ReadLine() );
+            var model = productService.DeleteByIdAsync(deleteid);
+            if(model.Result.Result == true)
+            {
+                Console.WriteLine(model.Result.Message);
+            }
+            else
+            {
+                Console.WriteLine("Product is not found");
+                goto Delete;
+            }
         }
     }
 }

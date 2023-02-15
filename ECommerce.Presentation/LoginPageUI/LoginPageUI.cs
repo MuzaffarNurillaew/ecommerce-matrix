@@ -20,6 +20,8 @@ namespace ECommerce.Presentation.LoginPageUI
 
                 int number = int.Parse(Console.ReadLine());
 
+
+
                 // Sign Up 
                 if (number == 1)
                 {

@@ -66,9 +66,9 @@ namespace ECommerce.Presentation.LoginPageUI
                         Password = password1
                     };
                     // bu yerini keyin davom etadi chunki server bilan ulash kere
-
+                   
                     var response = await userService.CreateAsync(person);
-
+                 
                     if (response.StatusCode == 404)
                     {
                         Console.WriteLine("Bunaqa user mavjud");
@@ -77,14 +77,15 @@ namespace ECommerce.Presentation.LoginPageUI
                     else
                     {
                         Console.WriteLine("Created\n");
-                        return person;
+                        //return person;
                     }
                 }
 
                 //Sign in
                 else if (number == 2)
                 {
-                    login:
+                    login1:
+                    Console.Clear();
                     Console.WriteLine("     Sign in ");
                     Console.Write("Enter your Login or Email: ");
                     string loginoremail = Console.ReadLine();
@@ -94,18 +95,22 @@ namespace ECommerce.Presentation.LoginPageUI
                     //serverga ulanadigan joyi qoldi
 
                     var user = await userService.GetAsync(x => x.Username == loginoremail || x.Email == loginoremail);
-                    if (user.StatusCode == 404)
+                    if (user.StatusCode == 200)
                     {
                         if (password == user.Result.Password)
                         {
                             Console.WriteLine("Entered");
-                            return user.Result;
+                            //return user.Result;
                         }
                         else
                         {
                             Console.WriteLine("Incorrect password or login.");
-                            goto login;
+                            goto login1;
                         }
+                    }
+                    else
+                    {
+                        Console.WriteLine("Bunaqa user yo'q.");
                     }
                 }
             }

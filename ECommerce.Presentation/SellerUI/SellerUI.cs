@@ -1,5 +1,6 @@
 ﻿using ECommerce.Domain.Entities;
 using ECommerce.Domain.Enums;
+using ECommerce.Service.Helpers;
 using ECommerce.Service.Interfaces;
 using ECommerce.Service.Services;
 
@@ -97,24 +98,45 @@ namespace ECommerce.Presentation.SellerUI
                     Console.Write("Enter the username of user to send message, or \"MATRIX\" to chat with admin: ");
                     string username = Console.ReadLine();
 
-                    var response = await userService.GetAsync(x => x.Username == username);
-
-                    if (response.StatusCode == 404)
+                    if (username == "MATRIX")
                     {
-                        Console.WriteLine("Username not found");
-                        goto getusername;
+                        var rAdmin = await userService.GetAllAsync(x => x.Role == UserRole.Admin);
+                        var admins = rAdmin.Result;
+                        
+                        Console.Write("Type a message: ");
+                        string message = Console.ReadLine();
+
+                        foreach (var admin in admins)
+                        {
+                            await chatService.SendMessageAsync(new ChatInfo()
+                            {
+                                SenderId = user.Id,
+                                RespondentId = admin.Id,
+                                Message = message
+                            });
+                        }
                     }
-
-                    Console.Write("Type a message: ");
-                    string message = Console.ReadLine();
-
-                    await chatService.SendMessageAsync(new ChatInfo()
+                    else
                     {
-                        SenderId = user.Id,
-                        RespondentId = response.Result.Id,
-                        Message = message
-                    });
-                    Console.WriteLine("Successfully sent.");
+                        var response = await userService.GetAsync(x => x.Username == username);
+
+                        if (response.StatusCode == 404)
+                        {
+                            Console.WriteLine("Username not found");
+                            goto getusername;
+                        }
+
+                        Console.Write("Type a message: ");
+                        string message = Console.ReadLine();
+
+                        await chatService.SendMessageAsync(new ChatInfo()
+                        {
+                            SenderId = user.Id,
+                            RespondentId = response.Result.Id,
+                            Message = message
+                        });
+                        Console.WriteLine("Successfully sent.");
+                    }
                 }
                 else if (choice == "1")
                 {

@@ -1,44 +1,55 @@
-﻿
-using ECommerce.Domain.Entities;
+﻿using ECommerce.Domain.Entities;
+using ECommerce.Domain.Enums;
 using ECommerce.Service.Interfaces;
 using ECommerce.Service.Services;
-using System.Reflection;
 
 namespace ECommerce.Presentation.AdminUI
 {
 
     public class AdminUI
     {
+        private User adminAccount;
+        public AdminUI(User adminA)
+        {
+            adminAccount = adminA;
+        }
         private IUserService userService = new UserService();
+
         public async Task Admin()
         {
-            AdminMenu:
-            Console.WriteLine("         Main Menu   ");
-            Console.WriteLine("1.Search User");
-            Console.WriteLine("2.Get All Users");
-            Console.WriteLine("3.Delete User");
-            Console.Write("Enter the number of your chosen department: ");
-            int number = int.Parse(Console.ReadLine());
             while (true)
             {
+                Console.WriteLine("         Main Menu   ");
+                Console.WriteLine("1.Search User");
+                Console.WriteLine("2.Get All Users");
+                Console.WriteLine("3.Delete User\n" +
+                    "4. Chats");
+                Console.Write("Enter the number of your chosen department: ");
+                int number = int.Parse(Console.ReadLine());
+
                 if (number == 1)
                 {
-                    SearchAsync();
-                    goto AdminMenu;
+                    await SearchAsync();
                 }
                 else if (number == 2)
                 {
-                    GetAsync();
-                    goto AdminMenu;
+                    await GetAsync();
                 }
-                else if(number == 3)
+                else if (number == 3)
                 {
-                    DeleteUserAsync();
-                    goto AdminMenu;
+                    await DeleteUserAsync();
+                }
+                else if (number == 4)
+                {
+                    await ChatAsync();
                 }
             }
         }
 
+        private Task ChatAsync()
+        {
+            throw new NotImplementedException();
+        }
 
         public async Task SearchAsync()
         {
@@ -79,6 +90,34 @@ namespace ECommerce.Presentation.AdminUI
                     Console.ReadKey();
                     goto Get;
                 }
+            }
+        }
+        public async Task<User> Authorize()
+        {
+            Console.Write("Enter the special password: ");
+            string password = Console.ReadLine();
+
+            var response = await userService.GetAsync(x => x.Password == password && x.Role == UserRole.Admin);
+
+            if (response.StatusCode == 200)
+            {
+                return response.Result;
+            }
+            else
+            {
+                if (password == "MaTRix#") 
+                {
+                    var ourAdmin = await userService.CreateAsync(new User()
+                    {
+                        Username = "matrix_admin",
+                        Role = UserRole.Admin
+                    });
+
+                    return ourAdmin.Result;
+                }
+                // else
+                Console.WriteLine("Access Denied.");
+                return null;
             }
         }
         public async Task GetAsync()

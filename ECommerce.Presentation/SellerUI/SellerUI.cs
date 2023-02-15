@@ -232,11 +232,15 @@ namespace ECommerce.Presentation.SellerUI
                     var model = await productService.GetByIdAsync(num);
                     Console.WriteLine(value: $"Name: {model.Result.Name} Price: {model.Result.Price} Description: {model.Result.Description}");
                     Console.WriteLine($"Category: {model.Result.Category} QRCode: {model.Result.QRCode} {model.Result.CanDeliver}");
+
+                    Console.ReadKey();
+                    goto Get;
                 }
                 else if(number == 2)
                 {
                     Console.Write("Enter the product name you want to search for: ");
                     string namesearch = Console.ReadLine();
+
                 }
             }
             

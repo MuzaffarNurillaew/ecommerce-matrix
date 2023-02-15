@@ -15,11 +15,12 @@ namespace ECommerce.Presentation
             var login = new LoginPageUI.LoginPageUI();
             var currentUser = await login.LoginPage();
 
-            if (currentUser.Status == UserStatus.Seller)
+            if (currentUser.Role == UserRole.Merchant)
             {
-                var seller = new SellerUI.SellerUI(currentUser); 
+                var seller = new SellerUI.SellerUI(currentUser);
+                await seller.Seller();
             }
-            else if (currentUser.Status == UserStatus.Customer)
+            else if (currentUser.Role == UserRole.Customer)
             {
 
             }

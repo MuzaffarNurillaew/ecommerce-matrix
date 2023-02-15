@@ -1,12 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace ECommerce.Presentation.CustomerUI
+﻿namespace ECommerce.Presentation.CustomerUI
 {
-    internal class CustomerUI
+    public class CustomerUI
     {
+        public void Customer()
+        {
+
+        }
     }
 }

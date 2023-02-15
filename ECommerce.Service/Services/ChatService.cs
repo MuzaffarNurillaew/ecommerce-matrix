@@ -19,10 +19,10 @@ namespace ECommerce.Service.Services
 
             await chatRepo.DeleteAsync(x => x.Id == id);
 
-            return new Response<ChatInfo>()
+            return new Response<bool>()
             {
                 StatusCode = 200,
-                Message = "bool",
+                Message = "Success",
                 Result = true
             };
         }
@@ -39,9 +39,23 @@ namespace ECommerce.Service.Services
             };
         }
 
-        public Task<Response<ChatInfo>> UpdateMessageAsync(long id)
+        public async Task<Response<ChatInfo>> UpdateMessageAsync(long id, string message)
         {
-            throw new NotImplementedException();
+            var OldchatInfo = await chatRepo.SelectAsync(x => x.Id == id);
+
+            if (OldchatInfo is null)
+            {
+                return new Response<ChatInfo>();
+            }
+
+            OldchatInfo.Message = message;
+
+            return new Response<ChatInfo>()
+            {
+                StatusCode = 200,
+                Message = "Success",
+                Result = OldchatInfo
+            };
         }
     }
 }

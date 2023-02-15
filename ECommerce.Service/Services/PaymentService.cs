@@ -10,6 +10,7 @@ namespace ECommerce.Service.Services
     {
         private readonly IRepository<Payment> paymentRepository = new Repository<Payment>();
         private readonly IRepository<Order> orderRepository = new Repository<Order>();
+        private readonly IRepository<User> userRepository = new Repository<User>();
         public async Task<Response<Payment>> AddAsync(Payment payment)
         {
             var order = await orderRepository.SelectAsync(x => x.PaymentId == payment.Id || x.Id == payment.OrderId);
@@ -31,6 +32,8 @@ namespace ECommerce.Service.Services
             else
             {
                 var result = await paymentRepository.CreateAsync(payment);
+                var seller = await userRepository.SelectAsync(x => x.Id == result.RecieverId);
+                seller.AvailableMoney += payment.Amount;
 
                 return new Response<Payment>()
                 {
@@ -82,7 +85,9 @@ namespace ECommerce.Service.Services
                     Message = "Payment not found"
                 };
             }
-
+            var seller = await userRepository.SelectAsync(x => x.Id == payment.RecieverId);
+            seller.AvailableMoney = seller.AvailableMoney - oldPayment.Amount + payment.Amount;
+            await userRepository.UpdateAsync(seller);
             await paymentRepository.UpdateAsync(payment);
 
             return new Response<Payment>()

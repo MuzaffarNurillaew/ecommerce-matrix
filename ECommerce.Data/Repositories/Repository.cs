@@ -3,7 +3,7 @@ using Newtonsoft.Json;
 using ECommerce.Domain.Commons;
 using ECommerce.Domain.Entities;
 using ECommerce.Data.Configurations;
-
+<<<<<<< HEAD
 
 namespace ECommerce.Data.Repositories
 {

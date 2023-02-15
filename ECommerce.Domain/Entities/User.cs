@@ -12,6 +12,6 @@ namespace ECommerce.Domain.Entities
         public string Password { get; set; }
         public string Username { get; set; }
         public decimal AvailableMoney { get; set; }
-        public UserStatus Status { get; set; }
+        public UserRole Role { get; set; }
     }
 }

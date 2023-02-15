@@ -91,11 +91,17 @@ namespace ECommerce.Service.Services
                     Message = "Payment not found"
                 };
             }
-            var seller = await userRepository.SelectAsync(x => x.Id == payment.RecieverId);
+            var order = await orderRepository.SelectAsync(x => x.PaymentId == payment.Id || x.Id == payment.OrderId);
+
+            foreach (var item in order.Items)
+            {
+                var product = await productRepository.SelectAsync(x => x.Id == item.ProductId);
+                var seller = await userRepository.SelectAsync(x => x.Id == product.OwnerId);
+
+                seller.AvailableMoney = seller.AvailableMoney - oldPayment.Amount + payment.Amount;
+                await userRepository.UpdateAsync(seller);
+            }
             
-            seller.AvailableMoney = seller.AvailableMoney - oldPayment.Amount + payment.Amount;
-            
-            await userRepository.UpdateAsync(seller);
             await paymentRepository.UpdateAsync(payment);
 
             return new Response<Payment>()

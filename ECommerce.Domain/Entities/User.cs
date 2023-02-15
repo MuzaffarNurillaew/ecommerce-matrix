@@ -1,4 +1,5 @@
 ﻿using ECommerce.Domain.Commons;
+using ECommerce.Domain.Enums;
 
 namespace ECommerce.Domain.Entities
 {
@@ -11,5 +12,6 @@ namespace ECommerce.Domain.Entities
         public string Password { get; set; }
         public string Username { get; set; }
         public decimal AvailableMoney { get; set; }
+        public UserStatus Status { get; set; }
     }
 }

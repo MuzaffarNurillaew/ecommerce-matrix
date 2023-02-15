@@ -42,6 +42,7 @@ namespace ECommerce.Service.Services
                 return new Response<bool>
                 {
                     Message = "Not found",
+                    Result = false
                 };
 
             await repostoryService.DeleteAsync(v => v.Id == id);

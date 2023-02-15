@@ -32,6 +32,10 @@ namespace ECommerce.Data.Repositories
             {
                 dbFile = Constants.ORDER_PATH;
             }
+            else if (typeof(TEntity) == typeof(ChatInfo))
+            {
+                dbFile = Constants.CHAT_PATH;
+            }
         }
         public async Task<TEntity> CreateAsync(TEntity entity)
         {

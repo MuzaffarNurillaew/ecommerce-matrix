@@ -59,7 +59,7 @@ namespace ECommerce.Data.Repositories
 
         public async Task<bool> DeleteAsync(Predicate<TEntity> predicate)
         {
-            TEntity entity = await SelectAsync(x => x.Id == id);
+            TEntity entity = await SelectAsync(x => predicate(x));
 
             if (entity is null)
             {

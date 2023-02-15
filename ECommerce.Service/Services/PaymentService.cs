@@ -11,6 +11,7 @@ namespace ECommerce.Service.Services
         private readonly IRepository<Payment> paymentRepository = new Repository<Payment>();
         private readonly IRepository<Order> orderRepository = new Repository<Order>();
         private readonly IRepository<User> userRepository = new Repository<User>();
+        private readonly IRepository<Product> productRepository = new Repository<Product>();
         public async Task<Response<Payment>> AddAsync(Payment payment)
         {
             var order = await orderRepository.SelectAsync(x => x.PaymentId == payment.Id || x.Id == payment.OrderId);
@@ -32,8 +33,13 @@ namespace ECommerce.Service.Services
             else
             {
                 var result = await paymentRepository.CreateAsync(payment);
-                var seller = await userRepository.SelectAsync(x => x.Id == result.RecieverId);
-                seller.AvailableMoney += payment.Amount;
+                
+                foreach (var item in order.Items)
+                {
+                    var product = await productRepository.SelectAsync(x => x.Id == item.ProductId);
+                    var seller = await userRepository.SelectAsync(x => x.Id == product.OwnerId);
+                    seller.AvailableMoney += product.Price;
+                }
 
                 return new Response<Payment>()
                 {
@@ -86,7 +92,9 @@ namespace ECommerce.Service.Services
                 };
             }
             var seller = await userRepository.SelectAsync(x => x.Id == payment.RecieverId);
+            
             seller.AvailableMoney = seller.AvailableMoney - oldPayment.Amount + payment.Amount;
+            
             await userRepository.UpdateAsync(seller);
             await paymentRepository.UpdateAsync(payment);
 

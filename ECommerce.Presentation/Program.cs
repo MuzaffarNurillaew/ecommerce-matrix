@@ -9,12 +9,23 @@ namespace ECommerce.Presentation
 {
     class Program
     {
-        private static IOrderService orderService = new OrderService();
-        private static async Task Main()
+        //private static IOrderService orderService = new OrderService();
+        private static async Task Main(string[] args)
         {
             var login = new LoginPageUI.LoginPageUI();
             var currentUser = await login.LoginPage();
 
+            if (args.Length == 1)
+            {
+                if (args[0] == "--neo")
+                {
+                    var tempAdmin = new AdminUI.AdminUI(new User() { });
+                    User anAdmin = await tempAdmin.Authorize();
+                    
+                    var adminAccount = new AdminUI.AdminUI(anAdmin);
+                    await adminAccount.Admin();
+                }
+            }
             if (currentUser.Role == UserRole.Merchant)
             {
                 var seller = new SellerUI.SellerUI(currentUser);

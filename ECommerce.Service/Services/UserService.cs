@@ -36,8 +36,7 @@ namespace ECommerce.Service.Services
 
         public async Task<Response<bool>> DeleteAsync(long id)
         {
-            var entities = await repostoryService.SelectAllAsync();
-            var model = entities.FirstOrDefault(p => p.Id == id);
+            var model = await repostoryService.SelectAsync(p => p.Id == id);
 
             if (model is not null)
                 return new Response<bool>

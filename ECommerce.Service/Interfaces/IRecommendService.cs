@@ -1,12 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using ECommerce.Domain.Entities;
+using ECommerce.Service.Helpers;
 
 namespace ECommerce.Service.Interfaces
 {
-    internal class IRecommendService
+    public interface IRecommendService
     {
+        Task<Response<List<Product>> 
     }
 }

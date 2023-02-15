@@ -10,6 +10,6 @@ namespace ECommerce.Service.Interfaces
         public Task<Response<Product>> GetByIdAsync(long id);
         public Task<Response<bool>> DeleteByIdAsync(long id);
         public Task<Response<Product>> GetByNameAsync(string name);
-        public Task<Response<List<Product>>> GetAllAsync();
+        public Task<Response<List<Product>>> GetAllAsync(Predicate<Product> predicate = null);
     }
 }

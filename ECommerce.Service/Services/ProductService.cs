@@ -10,16 +10,19 @@ namespace ECommerce.Service.Services
         private readonly Repository<Product> genericRepository = new Repository<Product>();
         public async Task<Response<Product>> AddAsync(Product product)
         {
-            var values = await genericRepository.SelectAllAsync(p => p.Name == product.Name);
-            if (values is not null)
+            var value = await genericRepository.SelectAsync(p => 
+            p.Name.ToLower() == product.Name.ToLower()
+            && p.QRCode.ToLower() == product.QRCode.ToLower());
+            
+            if (value is not null)
             {
                 return new Response<Product>()
                 {
-                    StatusCode = 404,
-                    Message = "Not Found",
-                    Result = null
+                    Message = "Bu mahsulot allaqachon mavjud",
+                    Result = value
                 };
             }
+
             await genericRepository.CreateAsync(product);
             return new Response<Product>()
             {
@@ -31,17 +34,18 @@ namespace ECommerce.Service.Services
 
         public async Task<Response<bool>> DeleteByIdAsync(long id)
         {
-            var values = await genericRepository.SelectAllAsync(p=>p.Id == id);
-            if (values is null)
+            var value = await genericRepository.SelectAsync(p=> p.Id == id);
+            
+            if (value is null)
             {
                 return new Response<bool>()
                 {
-                    StatusCode = 404,
-                    Message = "Not Found",
                     Result = false
                 };
             }
+
             await genericRepository.DeleteAsync(v => v.Id == id);
+            
             return new Response<bool>()
             {
                 StatusCode = 200,
@@ -50,17 +54,17 @@ namespace ECommerce.Service.Services
             };
         }
 
-        public async Task<Response<List<Product>>> GetAllAsync()
+        public async Task<Response<List<Product>>> GetAllAsync(Predicate<Product> predicate)
         {
             return new Response<List<Product>>()
             {
                 StatusCode = 200,
                 Message = "Success",
-                Result = await genericRepository.SelectAllAsync()
+                Result = await genericRepository.SelectAllAsync(x => predicate(x))
             };
         }
 
-        async Task<Response<Product>> IProductService.GetByIdAsync(long id)
+        async Task<Response<Product>> GetByIdAsync(long id)
         {
             var values = await genericRepository.SelectAllAsync();
             var value = values.FirstOrDefault(v =>v.Id == id);

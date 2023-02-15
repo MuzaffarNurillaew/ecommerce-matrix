@@ -64,19 +64,16 @@ namespace ECommerce.Service.Services
             };
         }
 
-        async Task<Response<Product>> GetByIdAsync(long id)
+        public async Task<Response<Product>> GetByIdAsync(long id)
         {
             var values = await genericRepository.SelectAllAsync();
             var value = values.FirstOrDefault(v =>v.Id == id);
+            
             if(value is null)
             {
-                return new Response<Product>()
-                {
-                    StatusCode = 404,
-                    Message = "Not Found",
-                    Result = null
-                };
+                return new Response<Product>();
             }
+
             return new Response<Product>()
             {
                 StatusCode = 200,
@@ -109,16 +106,14 @@ namespace ECommerce.Service.Services
         public async Task<Response<Product>> UpdateAsync(long id, Product product)
         {
             var value = await genericRepository.SelectAsync(p=>p.Id == id);
+            
             if (value is null)
             {
-                return new Response<Product>()
-                {
-                    StatusCode = 404,
-                    Message = "Not Found",
-                    Result = null
-                };
+                return new Response<Product>();
             }
+
             await genericRepository.UpdateAsync(product);
+            
             return new Response<Product>()
             {
                 StatusCode = 200,

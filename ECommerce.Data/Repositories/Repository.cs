@@ -84,6 +84,11 @@ namespace ECommerce.Data.Repositories
             }
 
             entities = JsonConvert.DeserializeObject<List<TEntity>>(content);
+            if (predicate is not null)
+            {
+                var result = entities.FindAll(x => predicate(x));
+                return result;
+            }
 
             return entities;
         }

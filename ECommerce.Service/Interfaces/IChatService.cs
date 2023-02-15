@@ -8,5 +8,6 @@ namespace ECommerce.Service.Interfaces
         Task<Response<ChatInfo>> SendMessageAsync(ChatInfo message);
         Task<Response<bool>> DeleteMessageAsync(long id);
         Task<Response<ChatInfo>> UpdateMessageAsync(long id, string message);
+        Task<Response<List<ChatInfo>>> GetAll(Predicate<ChatInfo> predicate = null);
     }
 }

@@ -8,13 +8,12 @@ namespace ECommerce.Presentation
     class Program
     {
         private static IOrderService orderService = new OrderService();
-        private static Task Main()
+        private static async Task Main()
         {
 
             var login = new LoginPageUI.LoginPageUI();
-            login.LoginPage();
+            await login.LoginPage();
 
-            return Task.CompletedTask;
         }
     }
 }

@@ -218,6 +218,7 @@ namespace ECommerce.Presentation.SellerUI
          
         public async Task Getproduct()
         {
+            Get:
             Console.WriteLine($"1.Search by id\n" +
                 $"2.Search by name\n" );
             Console.Write("Enter the part number you want to search: ");
@@ -226,7 +227,16 @@ namespace ECommerce.Presentation.SellerUI
             {
                 if (number == 1)
                 {
-                    Console.WriteLine(" ");
+                    Console.Write("Enter the product id you want to search for: ");
+                    int num = int.Parse(Console.ReadLine());
+                    var model = await productService.GetByIdAsync(num);
+                    Console.WriteLine(value: $"Name: {model.Result.Name} Price: {model.Result.Price} Description: {model.Result.Description}");
+                    Console.WriteLine($"Category: {model.Result.Category} QRCode: {model.Result.QRCode} {model.Result.CanDeliver}");
+                }
+                else if(number == 2)
+                {
+                    Console.Write("Enter the product name you want to search for: ");
+                    string namesearch = Console.ReadLine();
                 }
             }
             

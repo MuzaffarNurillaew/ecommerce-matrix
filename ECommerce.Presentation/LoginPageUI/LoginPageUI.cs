@@ -66,9 +66,9 @@ namespace ECommerce.Presentation.LoginPageUI
                         Password = password1
                     };
                     // bu yerini keyin davom etadi chunki server bilan ulash kere
-
+                   
                     var response = await userService.CreateAsync(person);
-
+                 
                     if (response.StatusCode == 404)
                     {
                         Console.WriteLine("Bunaqa user mavjud");

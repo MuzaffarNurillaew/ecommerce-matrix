@@ -10,6 +10,7 @@
         Perfumes = 60,
         Souviners = 70,
         Toys = 80,
-        Books = 90
+        Books = 90,
+        Other = 100
     }
 }

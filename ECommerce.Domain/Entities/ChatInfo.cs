@@ -1,12 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using ECommerce.Domain.Commons;
 
 namespace ECommerce.Domain.Entities
 {
-    internal class Chat
+    public class ChatInfo : Auditable
     {
+        public long SenderId { get; set; }
+        public long RespondentId { get; set; }
+        public string Message { get; set; }
     }
 }

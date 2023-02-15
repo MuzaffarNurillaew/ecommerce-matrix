@@ -32,7 +32,7 @@ namespace ECommerce.Service.Services
             };
         }
 
-        public async Task<Response<bool>> DeleteByIdAsync(long id)
+        public async Task<Response<bool>> DeleteByIdAsync(long id, long ownerId)
         {
             var value = await genericRepository.SelectAsync(p=> p.Id == id);
             
@@ -81,7 +81,22 @@ namespace ECommerce.Service.Services
                 Result = value
             };
         }
+        public async Task<Response<Product>> GetAsync(Predicate<Product> predicate)
+        {
+            var value = await genericRepository.SelectAsync(x => predicate(x));
 
+            if (value is null)
+            {
+                return new Response<Product>();
+            }
+
+            return new Response<Product>()
+            {
+                StatusCode = 200,
+                Message = "Success",
+                Result = value
+            };
+        }
         public async Task<Response<Product>> GetByNameAsync(string name)
         {
             var values = await genericRepository.SelectAllAsync();

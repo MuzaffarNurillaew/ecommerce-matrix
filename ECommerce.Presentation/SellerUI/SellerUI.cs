@@ -2,6 +2,7 @@
 using ECommerce.Domain.Enums;
 using ECommerce.Service.Interfaces;
 using ECommerce.Service.Services;
+using System.Reflection;
 
 namespace ECommerce.Presentation.SellerUI
 {
@@ -23,6 +24,10 @@ namespace ECommerce.Presentation.SellerUI
                 Console.WriteLine("3.Get ");
                 Console.WriteLine("4.GetAll ");
                 Console.WriteLine("5.Delete ");
+                Console.WriteLine("6. Chat\n" +
+                    "7. Get recommendations\n" +
+                    "8. Logout\n" +
+                    "9. Delete account\n");
                 Console.WriteLine();
                 Console.Write("Enter the number of your chosen department: ");
                 int number = int.Parse(Console.ReadLine());
@@ -245,51 +250,73 @@ namespace ECommerce.Presentation.SellerUI
 
         public async Task GetproductAsync()
         {
-        Get:
             Console.WriteLine($"1.Search by id\n" +
-                $"2.Search by name\n");
-            Console.Write("Enter the part number you want to search: ");
-            int number = int.Parse(Console.ReadLine());
-            while (true)
-            {
-                if (number == 1)
-                {
-                    Console.Write("Enter the product id you want to search for: ");
-                    int num = int.Parse(Console.ReadLine());
-                    var model = await productService.GetByIdAsync(num);
-                    if (model.StatusCode == 404)
-                    {
-                        Console.WriteLine(model.Message);
-                    }
-                    Console.WriteLine(value: $"Name: {model.Result.Name} Price: {model.Result.Price} Description: {model.Result.Description}");
-                    Console.WriteLine($"Category: {model.Result.Category} QRCode: {model.Result.QRCode} {model.Result.CanDeliver}");
+                $"2.Search by name\n" +
+                $"~. Quit\n");
 
-                    Console.ReadKey();
-                    goto Get;
-                }
-                else if (number == 2)
+            Console.Write("Enter the part number you want to search: ");
+            string number = Console.ReadLine();
+
+            if (number == "1")
+            {
+                Console.Write("Enter the product id you want to search for: ");
+                int num = int.Parse(Console.ReadLine());
+
+                var model = await productService.GetAsync(x => x.Id == num && x.OwnerId == user.Id);
+                if (model.StatusCode == 404)
                 {
-                    Console.Write("Enter the product name you want to search for: ");
-                    string namesearch = Console.ReadLine();
-                    var model = await productService.GetByNameAsync(namesearch);
-                    if (model.StatusCode == 404)
-                    {
-                        Console.WriteLine(model.Message);
-                    }
-                    Console.WriteLine(value: $"Name: {model.Result.Name} Price: {model.Result.Price} Description: {model.Result.Description}");
-                    Console.WriteLine($"Category: {model.Result.Category} QRCode: {model.Result.QRCode} {model.Result.CanDeliver}");
-                    Console.ReadKey();
-                    goto Get;
+                    Console.WriteLine(model.Message);
                 }
+
+                Console.WriteLine(value: $"Name: {model.Result.Name} Price: {model.Result.Price} Description: {model.Result.Description}");
+                Console.WriteLine($"Category: {model.Result.Category} QRCode: {model.Result.QRCode} {model.Result.CanDeliver}");
+
             }
+            else if (number == "2")
+            {
+                Console.Write("Enter the product name you want to search for: ");
+                string namesearch = Console.ReadLine();
+                var model = await productService.GetAsync(x => x.Name == namesearch && x.OwnerId == user.Id);
+                if (model.StatusCode == 404)
+                {
+                    Console.WriteLine(model.Message);
+                }
+                Console.WriteLine(value: $"Name: {model.Result.Name} Price: {model.Result.Price} Description: {model.Result.Description}");
+                Console.WriteLine($"Category: {model.Result.Category} QRCode: {model.Result.QRCode} {model.Result.CanDeliver}");
+            }
+            else
+            {
+                return;
+            }
+            Console.Write("Press any key to return main menu.");
+            Console.ReadKey();
 
         }
 
         public async Task GetAllProductAsync()
         {
-            while (true)
+            Console.Write("1. Get all products.\n" +
+                "2. Get all products in one category\n" +
+                "~. Return to main menu.\n\n" +
+                "Your choice: ");
+            string choice1 = Console.ReadLine();
+
+            if (choice1 == "1")
             {
-            Back:
+                var response = await productService.GetAllAsync(x => x.OwnerId == user.Id);
+                var models = response.Result;
+
+                foreach (var item in models)
+                {
+                        Console.WriteLine("====================================================================================");
+                        Console.Write($"Id: {item.Id} Name: {item.Name} Description: {item.Description} \n" +
+                            $"Price: {item.Price} QRCode: {item.QRCode} Category: {item.Category} Can we deliver: {item.CanDeliver}\n" +
+                            $"CreateAtTime: {item.CreatedAt}");
+                }
+
+            }
+            else if (choice1 == "2")
+            {
                 Console.Clear();
                 Console.WriteLine($"1.Food\n" +
                            $"2.Electronics\n" +
@@ -308,7 +335,6 @@ namespace ECommerce.Presentation.SellerUI
                 if (model.StatusCode == 404)
                 {
                     Console.WriteLine(model.Message);
-                    goto Back;
                 }
 
                 if (choice == 1)
@@ -325,7 +351,6 @@ namespace ECommerce.Presentation.SellerUI
 
                     }
                     Console.ReadKey();
-                    goto Back;
                 }
                 else if (choice == 2)
                 {
@@ -341,7 +366,6 @@ namespace ECommerce.Presentation.SellerUI
 
                     }
                     Console.ReadKey();
-                    goto Back;
                 }
                 else if (choice == 3)
                 {
@@ -357,7 +381,6 @@ namespace ECommerce.Presentation.SellerUI
 
                     }
                     Console.ReadKey();
-                    goto Back;
                 }
                 else if (choice == 4)
                 {
@@ -373,7 +396,6 @@ namespace ECommerce.Presentation.SellerUI
 
                     }
                     Console.ReadKey();
-                    goto Back;
                 }
                 else if (choice == 5)
                 {
@@ -389,7 +411,6 @@ namespace ECommerce.Presentation.SellerUI
 
                     }
                     Console.ReadKey();
-                    goto Back;
                 }
                 else if (choice == 6)
                 {
@@ -405,7 +426,6 @@ namespace ECommerce.Presentation.SellerUI
 
                     }
                     Console.ReadKey();
-                    goto Back;
                 }
                 else if (choice == 7)
                 {
@@ -421,7 +441,6 @@ namespace ECommerce.Presentation.SellerUI
 
                     }
                     Console.ReadKey();
-                    goto Back;
                 }
                 else if (choice == 8)
                 {
@@ -437,7 +456,6 @@ namespace ECommerce.Presentation.SellerUI
 
                     }
                     Console.ReadKey();
-                    goto Back;
                 }
                 else if (choice == 9)
                 {
@@ -453,7 +471,6 @@ namespace ECommerce.Presentation.SellerUI
 
                     }
                     Console.ReadKey();
-                    goto Back;
                 }
                 else if (choice == 10)
                 {
@@ -469,17 +486,19 @@ namespace ECommerce.Presentation.SellerUI
 
                     }
                     Console.ReadKey();
-                    goto Back;
                 }
+            }
+            else
+            {
+                return;
             }
         }
 
         public async Task DeleteProductAsync()
         {
-        Delete:
             Console.Write("Enter the id of the product you want to delete: ");
             int deleteid = int.Parse(Console.ReadLine());
-            var model = productService.DeleteByIdAsync(deleteid);
+            var model = productService.DeleteByIdAsync(deleteid, user.Id);
             if (model.Result.Result == true)
             {
                 Console.WriteLine(model.Result.Message);
@@ -487,8 +506,10 @@ namespace ECommerce.Presentation.SellerUI
             else
             {
                 Console.WriteLine("Product is not found");
-                goto Delete;
             }
+
+            Console.Write("Press any key to return main menu.");
+            Console.ReadKey(true);
         }
     }
 }

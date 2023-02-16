@@ -101,7 +101,7 @@ namespace ECommerce.Service.Services
         public async Task<Response<Product>> GetByNameAsync(string name)
         {
             var values = await genericRepository.SelectAllAsync();
-            var value = values.FirstOrDefault(p => p.Name == name);
+            var value = values.FirstOrDefault(p => p.Name.ToLower().Contains(name.ToLower()));
             if (value is null)
             {
                 return new Response<Product>()

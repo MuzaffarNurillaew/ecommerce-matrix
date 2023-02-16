@@ -24,8 +24,8 @@ namespace ECommerce.Presentation
                 }
                 else if (currentUser.Role == UserRole.Customer)
                 {
-                    var customer = new CustomerUI.CustomerUI();
-                    await customer.CustomerU(currentUser);
+                    var customer = new CustomerUI.CustomerUI(currentUser);
+                    await customer.Customer();
                 }
                 else if (currentUser.Role == UserRole.Admin)
                 {

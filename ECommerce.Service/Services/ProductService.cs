@@ -56,11 +56,12 @@ namespace ECommerce.Service.Services
 
         public async Task<Response<List<Product>>> GetAllAsync(Predicate<Product> predicate)
         {
+            var result = await genericRepository.SelectAllAsync(x => predicate(x));
             return new Response<List<Product>>()
             {
                 StatusCode = 200,
                 Message = "Success",
-                Result = await genericRepository.SelectAllAsync(x => predicate(x))
+                Result = result
             };
         }
 

@@ -27,6 +27,16 @@ namespace ECommerce.Service.Services
             };
         }
 
+        public async Task<Response<List<ChatInfo>>> GetAll(Predicate<ChatInfo> predicate = null)
+        {
+            return new Response<List<ChatInfo>>()
+            {
+                StatusCode = 200,
+                Message = "Success",
+                Result = await chatRepo.SelectAllAsync(x => predicate(x))
+            };
+        }
+
         public async Task<Response<ChatInfo>> SendMessageAsync(ChatInfo message)
         {
             await chatRepo.CreateAsync(message);

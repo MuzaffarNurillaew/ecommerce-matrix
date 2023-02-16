@@ -2,6 +2,7 @@
 using ECommerce.Domain.Enums;
 using ECommerce.Service.Interfaces;
 using ECommerce.Service.Services;
+using System.Diagnostics;
 
 namespace ECommerce.Presentation.CustomerUI
 {
@@ -91,12 +92,12 @@ namespace ECommerce.Presentation.CustomerUI
             var response = await orderService.GetAllAsync(x => x.UserId == user.Id);
             var orders = response.Result;
 
-            foreach ( var order in orders )
+            foreach (var order in orders)
             {
                 var paymentResponse = await paymentService.GetByIdAsync(order.PaymentId);
                 decimal totalPaidMoney = 0;
 
-                if ( paymentResponse.StatusCode == 200 )
+                if (paymentResponse.StatusCode == 200)
                 {
                     totalPaidMoney = paymentResponse.Result.Amount;
                 }
@@ -296,9 +297,81 @@ namespace ECommerce.Presentation.CustomerUI
             }
         }
 
-        private Task OrderProductsAsync()
+        private async Task OrderProductsAsync()
         {
-            throw new NotImplementedException();
+            #region Order
+            var response = await productService.GetAllAsync();
+            var entities = response.Result;
+            int index = 1;
+
+            foreach (var entity in entities)
+            {
+                Console.WriteLine("=================================================");
+                Console.WriteLine($"Index: {index}" +
+                    $"Category: {entity.Category}\n" +
+                    $"Name: {entity.Name}, Price: {entity.Price}\n" +
+                    $"Available amount: {entity.HowManyLeft}\n" +
+                    $"Description: {entity.Description}");
+                Console.WriteLine("=================================================");
+                index++;
+            }
+            int[][] choices;
+            try
+            {
+                Console.Write("Add products to your cart: format INDEX:AMOUNT =>");
+                choices = Array.ConvertAll(Console.ReadLine().Split(), x => Array.ConvertAll(x.Split(":"), int.Parse));
+            }
+            catch
+            {
+                Console.WriteLine("Incorrect format.");
+                return;
+            }
+            var order = new Order();
+
+            await orderService.AddAsync(order);
+            var orderItems = new List<OrderItem>();
+            decimal totalPrice = 0;
+            
+            foreach (var choice in choices)
+            {
+                var item = new OrderItem()
+                {
+                    OrderId = order.Id,
+                    ProductId = entities[choice[0] - 1].Id,
+                    Price = entities[choice[0] - 1].Price,
+                    Quantity = choice[1]
+                };
+                totalPrice += entities[choice[0] - 1].Price;
+                orderItems.Add(item);
+            }
+
+            await orderService.UpdateAsync(order.Id, new Order()
+            {
+                IsPaid = false,
+                Items = orderItems,
+                TotalAmount = totalPrice
+            });
+            #endregion
+
+            #region Payment
+            if (user.AvailableMoney >= totalPrice)
+            {
+                var paymentResponse = await paymentService.AddAsync(new Payment()
+                {
+                    OrderId = order.Id
+                });
+                var payment = paymentResponse.Result;
+
+                await orderService.UpdateAsync(order.Id, new Order()
+                {
+                    IsPaid = false,
+                    Items = orderItems,
+                    TotalAmount = totalPrice,
+                    PaymentId = payment.Id,
+                    OrderStatus = OrderStatus.Pending
+                });
+            }
+            #endregion
         }
 
         private async Task ViewProductsAsync()

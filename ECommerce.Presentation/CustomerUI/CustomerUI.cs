@@ -57,7 +57,7 @@ namespace ECommerce.Presentation.CustomerUI
             //      LOGIKA
             public async Task OrderNewProduct()
             {
-                Console.Write("enter your id:    ");
+                Console.Write("enter your user id:    ");
                 long ownerId = long.Parse(Console.ReadLine());
                 Console.WriteLine($"1.Food\n" +
                        $"2.Electronics\n" +
@@ -84,11 +84,45 @@ namespace ECommerce.Presentation.CustomerUI
                 if (answer.ToLower() == "yes" || answer.ToLower()[0] == 'y') delivery = true;
                 else  delivery = false;
 
-                Console.WriteLine("Enter QR code to this product:   ");
-                string qrCode = Console.ReadLine();
+                var model = new Product()
+                {
+                    OwnerId = ownerId,
+                    Category = (ProductCategory)(choice * 10),
+                    Name = nameProduct,
+                    Price = price,
+                    CanDeliver = delivery,
+                };
 
-                Console.WriteLine("Enter Description to your product:  ");
-                string desc = Console.ReadLine();
+            }
+
+            public async Task ChangeOrder()
+            {
+                Console.Write("enter your user id:    ");
+                long ownerId = long.Parse(Console.ReadLine());
+                Console.WriteLine($"1.Food\n" +
+                       $"2.Electronics\n" +
+                       $"3.Clothes\n" +
+                       $"4.Accesories\n" +
+                       $"5.Furnitures\n" +
+                       $"6.Perfumes\n" +
+                       $"7.Souviners\n" +
+                       $"8.Toys\n" +
+                       $"9.Books\n" +
+                       $"10.Others\n");
+                Console.Write("Enter the number of the new category: ");
+                int choice = int.Parse(Console.ReadLine());
+
+                Console.WriteLine("Enter name of product:   ");
+                string nameProduct = Console.ReadLine();
+
+                Console.WriteLine("Enter price of product:   ");
+                decimal price = decimal.Parse(Console.ReadLine());
+
+                Console.WriteLine("Enter {yes || no } about you need deliver product:  ");
+                string answer = Console.ReadLine();
+                bool delivery;
+                if (answer.ToLower() == "yes" || answer.ToLower()[0] == 'y') delivery = true;
+                else delivery = false;
 
                 var model = new Product()
                 {
@@ -97,10 +131,7 @@ namespace ECommerce.Presentation.CustomerUI
                     Name = nameProduct,
                     Price = price,
                     CanDeliver = delivery,
-                    QRCode = qrCode,
-                    Description = desc
                 };
-
             }
-        }
     }
+}

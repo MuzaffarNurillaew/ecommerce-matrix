@@ -54,11 +54,6 @@ namespace ECommerce.Presentation.CustomerUI
                 Console.Write("Enter the number of the product you want to buy: ");
                 var item = await productService.GetByIdAsync(list[int.Parse(Console.ReadLine()) - 1]);
 
-                Console.WriteLine($" Name: {item.Result.Name} Description: {item.Result.Description} \n" +
-                                   $"Price: {item.Result.Price} Category: {item.Result.Category} Can we deliver: {item.Result.CanDeliver}\n" +
-                                   $"CreateAtTime: {item.Result.CreatedAt}\n");
-                Console.WriteLine("1.Buy \n 2.Return Main Menu\n 3.Return products");
-                Console.Write("Enter the number of the product you want to department: ");
                 int num = int.Parse(Console.ReadLine());
                 if (num == 1)
                 {
@@ -81,11 +76,9 @@ namespace ECommerce.Presentation.CustomerUI
             {
                 if (number == 11)
                 {
-                    //MyProfile();
 
                 }
             }
-
         }
         public async Task MyProfile(User userperson)
         {

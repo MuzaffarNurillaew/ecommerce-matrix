@@ -80,7 +80,7 @@ namespace ECommerce.Service.Services
             };
         }
 
-        public async Task<Response<Payment>> UpdateAsync(long id, Payment payment)
+        public async Task<Response<Payment>> UpdateAsync(long? id, Payment payment)
         {
             var oldPayment = await paymentRepository.SelectAsync(x => x.Id == id);
 

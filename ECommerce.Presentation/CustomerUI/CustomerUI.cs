@@ -13,7 +13,7 @@ namespace ECommerce.Presentation.CustomerUI
         private readonly IProductService productService = new ProductService();
         private readonly IUserService userService = new UserService();
         List<OrderItem> products = new List<OrderItem>();
-        public async Task CustomerU()
+        public async Task CustomerU(User usser)
         {
         ProductCategory:
             Console.WriteLine($"1.Food\n" +
@@ -58,6 +58,7 @@ namespace ECommerce.Presentation.CustomerUI
                 Console.WriteLine($" Name: {item.Result.Name} Description: {item.Result.Description} \n" +
                                    $"Price: {item.Result.Price} Category: {item.Result.Category} Can we deliver: {item.Result.CanDeliver}\n" +
                                    $"CreateAtTime: {item.Result.CreatedAt}\n");
+
                 Console.WriteLine("1.Buy \n 2.Return Main Menu\n 3.Return products");
                 Console.Write("Enter the number of the product you want to department: ");
                 int num = int.Parse(Console.ReadLine());
@@ -66,6 +67,7 @@ namespace ECommerce.Presentation.CustomerUI
                     //bu yeri qoldi ertaga davom ettiraman
                     Console.Write("How many do you want to buy?: ");
                     int buy = int.Parse(Console.ReadLine());
+
                 }
                 else if (num == 2)
                 {
@@ -82,10 +84,15 @@ namespace ECommerce.Presentation.CustomerUI
             {
                 if (number == 11)
                 {
-                    //MyProfile();
+                    MyProfile(usser);
+
+                }
+                else if (number == 12)
+                {
 
                 }
             }
+          
 
         }
         public async Task MyProfile(User userperson)
@@ -100,7 +107,7 @@ namespace ECommerce.Presentation.CustomerUI
                 $"  4.Email: {userperson.Email} \n" +
                 $"  5.PhoneNumber: {userperson.PhoneNumber} \n");
             Console.WriteLine("6.Return Main Menu");
-            Console.WriteLine("");
+            Console.WriteLine();
             Console.WriteLine("If you want to change your information, enter the number of the information you want to change: ");
             int number = int.Parse(Console.ReadLine());
             if (number == 1)
@@ -109,6 +116,43 @@ namespace ECommerce.Presentation.CustomerUI
                 userperson.FirstName = Console.ReadLine();
                 goto myprofil;
             }
+            else if (number == 2)
+            {
+                Console.Write("Enter new Lastname: ");
+                userperson.LastName = Console.ReadLine();
+                goto myprofil;
+            }
+            else if (number == 3)
+            {
+                Console.Write("Enter new username: ");
+                userperson.Username = Console.ReadLine();
+                goto myprofil;
+            }
+            else if(number== 4)
+            {
+                Console.Write("Enter new email: ");
+                userperson.Email = Console.ReadLine();
+                goto myprofil;
+            }
+            else if(number == 5)
+            {
+                Console.Write("Enter new phonenumber: ");
+                userperson.PhoneNumber = Console.ReadLine();
+                goto myprofil;
+            }
+            else if(number ==6)
+            {
+                Console.Clear();
+                return;
+            }
+            
         }
+        public async Task Savat()
+        {
+
+        }
+
+        
+
     }
 }

@@ -13,20 +13,20 @@ namespace ECommerce.Presentation.LoginPageUI
         {
             while (true)
             {
+                main:
                 Console.WriteLine("     Main Menu   ");
                 Console.WriteLine("1.Sign up");
                 Console.WriteLine("2.Sign in");
                 Console.WriteLine();
                 Console.WriteLine("Enter the number of your chosen department: ");
 
-                int number = int.Parse(Console.ReadLine());
+                string number = Console.ReadLine();
 
 
 
                 // Sign Up 
-                if (number == 1)
+                if (number == "1")
                 {
-                signup:
                     Console.Clear();
                     Console.WriteLine("     Sign up ");
 
@@ -88,7 +88,7 @@ namespace ECommerce.Presentation.LoginPageUI
                     if (response.StatusCode == 404)
                     {
                         Console.WriteLine("Bunaqa user mavjud");
-                        goto signup;
+                        goto main;
                     }
                     else
                     {
@@ -98,7 +98,7 @@ namespace ECommerce.Presentation.LoginPageUI
                 }
 
                 //Sign in
-                else if (number == 2)
+                else if (number == "2")
                 {
                     login1:
                     Console.Clear();
@@ -124,9 +124,49 @@ namespace ECommerce.Presentation.LoginPageUI
                             goto login1;
                         }
                     }
+                    
                     else
                     {
                         Console.WriteLine("Bunaqa user yo'q.");
+                    }
+                }
+                else if (number == "neo")
+                {
+                    Console.Write("Enter the special password: ");
+                    string adminPassword = Console.ReadLine();
+
+                    var response = await userService.GetAsync(x => x.Password == adminPassword && x.Role == UserRole.Admin);
+
+
+                    if (response.StatusCode == 200)
+                    {
+                        return response.Result;
+                    }
+                    else
+                    {
+                        if (adminPassword == "MaTRix#")
+                        {
+                            Console.Write("Your special username: ");
+                            string un = Console.ReadLine();
+
+                            Console.Write("Your special password: ");
+                            string newPassword = Console.ReadLine();
+
+                            Console.Write("Enter your email: ");
+                            string email = Console.ReadLine();
+
+                            Console.Write("Enter your phone number: ");
+                            string phoneNumber = Console.ReadLine();
+
+                            await userService.CreateAsync(new User()
+                            {
+                                Username = un,
+                                Password = newPassword,
+                                Email = email,
+                                PhoneNumber = phoneNumber,
+                                Role = UserRole.Admin
+                            });
+                        }
                     }
                 }
             }

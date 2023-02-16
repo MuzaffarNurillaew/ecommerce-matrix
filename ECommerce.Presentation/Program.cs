@@ -12,28 +12,25 @@ namespace ECommerce.Presentation
         //private static IOrderService orderService = new OrderService();
         private static async Task Main(string[] args)
         {
-            var login = new LoginPageUI.LoginPageUI();
-            var currentUser = await login.LoginPage();
+            while (true)
+            {
+                var login = new LoginPageUI.LoginPageUI();
+                var currentUser = await login.LoginPage();
 
-            if (args.Length == 1)
-            {
-                if (args[0] == "--neo")
+                if (currentUser.Role == UserRole.Merchant)
                 {
-                    var tempAdmin = new AdminUI.AdminUI(new User() { });
-                    User anAdmin = await tempAdmin.Authorize();
-                    
-                    var adminAccount = new AdminUI.AdminUI(anAdmin);
-                    await adminAccount.Admin();
+                    var seller = new SellerUI.SellerUI(currentUser);
+                    await seller.Seller();
                 }
-            }
-            if (currentUser.Role == UserRole.Merchant)
-            {
-                var seller = new SellerUI.SellerUI(currentUser);
-                await seller.Seller();
-            }
-            else if (currentUser.Role == UserRole.Customer)
-            {
-                Console.WriteLine("Customer UI chiqishi kerak edi.");
+                else if (currentUser.Role == UserRole.Customer)
+                {
+                    Console.WriteLine("Customer UI chiqishi kerak edi.");
+                }
+                else if (currentUser.Role == UserRole.Admin)
+                {
+                    var admin = new AdminUI.AdminUI(currentUser);
+                    await admin.Admin();
+                }
             }
         }
     }

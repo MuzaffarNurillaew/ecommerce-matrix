@@ -2,105 +2,153 @@
 using ECommerce.Domain.Enums;
 using ECommerce.Service.Interfaces;
 using ECommerce.Service.Services;
-using System.Diagnostics.CodeAnalysis;
+using System.Reflection;
 using System.Security.Cryptography.X509Certificates;
 
 namespace ECommerce.Presentation.CustomerUI
 {
     public class CustomerUI
     {
-        List<Product> products = new List<Product>();
-
         private readonly IOrderService orderService = new OrderService();
-        User user;
-        public CustomerUI(User user1)
+        private readonly IProductService productService = new ProductService();
+        private readonly IUserService userService = new UserService();
+        List<OrderItem> products = new List<OrderItem>();
+        public async Task CustomerU(User usser)
         {
-            this.user = user1;
-        }
+        ProductCategory:
+            Console.WriteLine($"1.Food\n" +
+                       $"   2.Electronics\n" +
+                       $"   3.Clothes\n" +
+                       $"   4.Accesories\n" +
+                       $"   5.Furnitures\n" +
+                       $"   6.Perfumes\n" +
+                       $"   7.Souviners\n" +
+                       $"   8.Toys\n" +
+                       $"   9.Books\n" +
+                       $"   10.Others\n");
+            Console.WriteLine("11.My Profile");
+            Console.WriteLine("12.Savat ");
 
-        public void Customer()
-        {
-            while (true)
+            Console.Write("Enter the number of the new category: ");
+            int number = int.Parse(Console.ReadLine());
+
+            string[] cate = "Food Electronics Assecories Furnitures Perfumes Souviners Toys Books Others".Split();
+            var models = await productService.GetAllAsync();
+            List<long> list = new List<long>();
+            int i = 1;
+            if (number < 11)
             {
-                Console.WriteLine("\t\t--CUSTOMER SERVICES: --");
+            ProductMenu:
+                foreach (var model in models.Result)
+                {
+                    if (cate[number - 1] == Convert.ToString(model.Category))
+                    {
+                        Console.WriteLine("\n===================================================================================");
+                        Console.Write($"{i}. Name: {model.Name} Description: {model.Description} \n" +
+                                $"Price: {model.Price} Category: {model.Category} Can we deliver: {model.CanDeliver}\n" +
+                                $"CreateAtTime: {model.CreatedAt}");
+                        list.Add(model.Id);
+                        i++;
+                    }
+                }
 
-                Console.WriteLine("\t1. --- Order new product ---");
-                // for updating 
-                Console.WriteLine("\t2. --- Change order count ---");
-                Console.WriteLine("\t3. --- Get all active ordered products ---");
-                Console.WriteLine("\t4. --- Cancel the order ---");
-                Console.WriteLine("\t5. --- Get all history of orders ---");
-                Console.WriteLine("\t6. --- CHAT ---");
-                Console.WriteLine();
-                Console.Write("\tEnter number => you choosen department :    ");
+                Console.Write("Enter the number of the product you want to buy: ");
+                var item = await productService.GetByIdAsync(list[int.Parse(Console.ReadLine()) - 1]);
 
+                Console.WriteLine($" Name: {item.Result.Name} Description: {item.Result.Description} \n" +
+                                   $"Price: {item.Result.Price} Category: {item.Result.Category} Can we deliver: {item.Result.CanDeliver}\n" +
+                                   $"CreateAtTime: {item.Result.CreatedAt}\n");
+
+                Console.WriteLine("1.Buy \n 2.Return Main Menu\n 3.Return products");
+                Console.Write("Enter the number of the product you want to department: ");
                 int num = int.Parse(Console.ReadLine());
-
                 if (num == 1)
                 {
+                    //bu yeri qoldi ertaga davom ettiraman
+                    Console.Write("How many do you want to buy?: ");
+                    int buy = int.Parse(Console.ReadLine());
 
                 }
                 else if (num == 2)
                 {
-
+                    Console.Clear();
+                    goto ProductCategory;
                 }
                 else if (num == 3)
                 {
-
+                    Console.Clear();
+                    goto ProductMenu;
                 }
-                else if (num == 4)
+            }
+            else if (number > 10)
+            {
+                if (number == 11)
                 {
+                    MyProfile(usser);
 
                 }
-                else if (num == 5)
-                {
-
-                }
-                else
+                else if (number == 12)
                 {
 
                 }
             }
+          
+
         }
-            //      LOGIKA
-        public async Task OrderNewProduct()
+        public async Task MyProfile(User userperson)
         {
-            Console.Write("enter your id:    ");
-            long ownerId = long.Parse(Console.ReadLine());
-            Console.WriteLine($"1.Food\n" +
-                    $"2.Electronics\n" +
-                    $"3.Clothes\n" +
-                    $"4.Accesories\n" +
-                    $"5.Furnitures\n" +
-                    $"6.Perfumes\n" +
-                    $"7.Souviners\n" +
-                    $"8.Toys\n" +
-                    $"9.Books\n" +
-                    $"10.Others\n");
-            Console.Write("Enter the number of the new category: ");
-            int choice = int.Parse(Console.ReadLine());
+        myprofil:
+            Console.Clear();
 
-            Console.WriteLine("Enter name of product:   ");
-            string nameProduct = Console.ReadLine();
-
-            Console.WriteLine("Enter price of product:   ");
-            decimal price = decimal.Parse(Console.ReadLine());
-
-            Console.WriteLine("Enter {yes || no } about you need deliver product:  ");
-            string answer = Console.ReadLine();
-            bool delivery;
-            if (answer.ToLower() == "yes" || answer.ToLower()[0] == 'y') delivery = true;
-            else  delivery = false;
-
-            var model = new Product()
+            Console.WriteLine("     My Profile ");
+            Console.WriteLine($"    1.FirstName: {userperson.FirstName}\n" +
+                $"  2.LastName: {userperson.LastName}\n" +
+                $"  3.UserName: {userperson.Username} \n" +
+                $"  4.Email: {userperson.Email} \n" +
+                $"  5.PhoneNumber: {userperson.PhoneNumber} \n");
+            Console.WriteLine("6.Return Main Menu");
+            Console.WriteLine();
+            Console.WriteLine("If you want to change your information, enter the number of the information you want to change: ");
+            int number = int.Parse(Console.ReadLine());
+            if (number == 1)
             {
-                OwnerId = ownerId,
-                Category = (ProductCategory)(choice * 10),
-                Name = nameProduct,
-                Price = price,
-                CanDeliver = delivery,
-            };
-            //await orderService.AddAsync(model);
+                Console.Write("Enter new name: ");
+                userperson.FirstName = Console.ReadLine();
+                goto myprofil;
+            }
+            else if (number == 2)
+            {
+                Console.Write("Enter new Lastname: ");
+                userperson.LastName = Console.ReadLine();
+                goto myprofil;
+            }
+            else if (number == 3)
+            {
+                Console.Write("Enter new username: ");
+                userperson.Username = Console.ReadLine();
+                goto myprofil;
+            }
+            else if(number== 4)
+            {
+                Console.Write("Enter new email: ");
+                userperson.Email = Console.ReadLine();
+                goto myprofil;
+            }
+            else if(number == 5)
+            {
+                Console.Write("Enter new phonenumber: ");
+                userperson.PhoneNumber = Console.ReadLine();
+                goto myprofil;
+            }
+            else if(number ==6)
+            {
+                Console.Clear();
+                return;
+            }
+            
+        }
+        public async Task Savat()
+        {
 
         }
 

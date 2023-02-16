@@ -54,9 +54,10 @@ namespace ECommerce.Service.Services
             };
         }
 
-        public async Task<Response<List<User>>> GetAllAsync()
+        public async Task<Response<List<User>>> GetAllAsync(Predicate<User> predicate = null)
         {
-            var results = await repostoryService.SelectAllAsync();
+            var results = await repostoryService.SelectAllAsync(x => predicate(x));
+
             return new Response<List<User>>()
             {
                 StatusCode = 200,

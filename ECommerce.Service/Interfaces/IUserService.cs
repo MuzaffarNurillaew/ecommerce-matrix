@@ -17,7 +17,7 @@ namespace ECommerce.Service.Interfaces
         public Task<Response<User>> GetByNameAsync(string name);
         public Task<Response<User>> GetAsync(Predicate<User> predicate);
         // taking all information 
-        public Task<Response<List<User>>> GetAllAsync();
+        public Task<Response<List<User>>> GetAllAsync(Predicate<User> predicate = null);
         // Deleting user 
         public Task<Response<bool>> DeleteAsync(long id);
     }

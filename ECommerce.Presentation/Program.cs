@@ -24,7 +24,8 @@ namespace ECommerce.Presentation
                 }
                 else if (currentUser.Role == UserRole.Customer)
                 {
-                    Console.WriteLine("Customer UI chiqishi kerak edi.");
+                    var customer = new CustomerUI.CustomerUI();
+                    await customer.CustomerU(currentUser);
                 }
                 else if (currentUser.Role == UserRole.Admin)
                 {

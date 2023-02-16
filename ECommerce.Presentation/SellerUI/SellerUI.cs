@@ -83,6 +83,7 @@ namespace ECommerce.Presentation.SellerUI
             throw new NotImplementedException();
         }
 
+
         private async Task ChatAsync()
         {
             while (true)
@@ -122,8 +123,76 @@ namespace ECommerce.Presentation.SellerUI
                     {
                         var response = await userService.GetAsync(x => x.Username == username);
 
+                        if (response.StatusCode == 404)
+                        {
+                            Console.WriteLine("Username not found");
+                            goto getusername;
+                        }
+
+                        Console.Write("Type a message: ");
+                        string message = Console.ReadLine();
+
+                        await chatService.SendMessageAsync(new ChatInfo()
+                        {
+                            SenderId = user.Id,
+                            RespondentId = response.Result.Id,
+                            Message = message
+                        });
+                        Console.WriteLine("Successfully sent.");
                     }
                 }
+                else if (choice == "1")
+                {
+                    var response = await chatService.GetAll(x => x.SenderId == user.Id || x.RespondentId == user.Id);
+                    var allMessages = response.Result;
+
+                    foreach (var message in allMessages)
+                    {
+                        if (user.Id == message.SenderId)
+                        {
+                            var r = await userService.GetByIdAsync(message.RespondentId);
+                            string fromUsername;
+                            if (r.StatusCode == 404)
+                            {
+                                fromUsername = "DELETED";
+                            }
+                            else
+                            {
+                                fromUsername = r.Result.Username;
+                            }
+                            Console.WriteLine($"From: YOU\n" +
+                                $"To: {fromUsername}\n" +
+                                $"Message: {message.Message} \n" +
+                                $"Date: {message.CreatedAt} \n");
+                        }
+                        else
+                        {
+                            var r = await userService.GetByIdAsync(message.SenderId);
+                            string toUsername;
+                            if (r.StatusCode == 404)
+                            {
+                                toUsername = "DELETED";
+                            }
+                            else
+                            {
+                                toUsername = r.Result.Username;
+                            }
+                            Console.WriteLine($"From: {toUsername}\n" +
+                                $"To: YOU\n" +
+                                $"Message: {message.Message}\n" +
+                                $"Date: {message.CreatedAt}\n");
+                        }
+
+
+                    }
+                }
+                else
+                {
+                    Console.Clear();
+                    break;
+                }
+                Console.Write("Press any key to continue...");
+                Console.ReadKey();
             }
         }
         public async Task CreateProductAsync()

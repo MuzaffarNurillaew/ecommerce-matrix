@@ -2,13 +2,14 @@
 using ECommerce.Domain.Enums;
 using ECommerce.Service.Interfaces;
 using ECommerce.Service.Services;
-using System.Reflection;
 
 namespace ECommerce.Presentation.SellerUI
 {
     public class SellerUI
     {
         private IProductService productService = new ProductService();
+        private IChatService chatService = new ChatService();
+        private IUserService userService = new UserService();
         private User user;
         public SellerUI(User user1)
         {
@@ -103,7 +104,7 @@ namespace ECommerce.Presentation.SellerUI
                     {
                         var rAdmin = await userService.GetAllAsync(x => x.Role == UserRole.Admin);
                         var admins = rAdmin.Result;
-                        
+
                         Console.Write("Type a message: ");
                         string message = Console.ReadLine();
 
@@ -121,8 +122,10 @@ namespace ECommerce.Presentation.SellerUI
                     {
                         var response = await userService.GetAsync(x => x.Username == username);
 
+                    }
+                }
+            }
         }
-
         public async Task CreateProductAsync()
         {
         getname:
@@ -366,10 +369,10 @@ namespace ECommerce.Presentation.SellerUI
 
                 foreach (var item in models)
                 {
-                        Console.WriteLine("====================================================================================");
-                        Console.Write($"Id: {item.Id} Name: {item.Name} Description: {item.Description} \n" +
-                            $"Price: {item.Price} QRCode: {item.QRCode} Category: {item.Category} Can we deliver: {item.CanDeliver}\n" +
-                            $"CreateAtTime: {item.CreatedAt}");
+                    Console.WriteLine("====================================================================================");
+                    Console.Write($"Id: {item.Id} Name: {item.Name} Description: {item.Description} \n" +
+                        $"Price: {item.Price} QRCode: {item.QRCode} Category: {item.Category} Can we deliver: {item.CanDeliver}\n" +
+                        $"CreateAtTime: {item.CreatedAt}");
                 }
 
             }

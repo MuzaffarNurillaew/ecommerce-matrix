@@ -14,20 +14,6 @@ namespace ECommerce.Presentation
         {
             while (true)
             {
-                
-                if (args.Length == 1)
-                {
-                    Console.WriteLine("you admin");
-                    if (args[0] == "--neo")
-                    {
-                        //var tempAdmin = new AdminUI.AdminUI(new User() { });
-                        //User anAdmin = await tempAdmin.Authorize();
-
-                        //var adminAccount = new AdminUI.AdminUI(anAdmin);
-                        //await adminAccount.Admin();
-                    }
-                }
-
                 var login = new LoginPageUI.LoginPageUI();
                 var currentUser = await login.LoginPage();
 

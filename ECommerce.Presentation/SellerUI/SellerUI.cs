@@ -72,6 +72,10 @@ namespace ECommerce.Presentation.SellerUI
                 {
                     await RecommendAsync();
                 }
+                else if (number == 8)
+                {
+                    return;
+                }
             }
 
         }

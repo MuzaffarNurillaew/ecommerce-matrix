@@ -12,28 +12,39 @@ namespace ECommerce.Presentation
         //private static IOrderService orderService = new OrderService();
         private static async Task Main(string[] args)
         {
-            var login = new LoginPageUI.LoginPageUI();
-            var currentUser = await login.LoginPage();
-
-            if (args.Length == 1)
+            while (true)
             {
-                if (args[0] == "--neo")
+                
+                if (args.Length == 1)
                 {
-                    var tempAdmin = new AdminUI.AdminUI(new User() { });
-                    User anAdmin = await tempAdmin.Authorize();
-                    
-                    var adminAccount = new AdminUI.AdminUI(anAdmin);
-                    await adminAccount.Admin();
+                    Console.WriteLine("you admin");
+                    if (args[0] == "--neo")
+                    {
+                        //var tempAdmin = new AdminUI.AdminUI(new User() { });
+                        //User anAdmin = await tempAdmin.Authorize();
+
+                        //var adminAccount = new AdminUI.AdminUI(anAdmin);
+                        //await adminAccount.Admin();
+                    }
                 }
-            }
-            if (currentUser.Role == UserRole.Merchant)
-            {
-                var seller = new SellerUI.SellerUI(currentUser);
-                await seller.Seller();
-            }
-            else if (currentUser.Role == UserRole.Customer)
-            {
-                Console.WriteLine("Customer UI chiqishi kerak edi.");
+
+                var login = new LoginPageUI.LoginPageUI();
+                var currentUser = await login.LoginPage();
+
+                if (currentUser.Role == UserRole.Merchant)
+                {
+                    var seller = new SellerUI.SellerUI(currentUser);
+                    await seller.Seller();
+                }
+                else if (currentUser.Role == UserRole.Customer)
+                {
+                    Console.WriteLine("Customer UI chiqishi kerak edi.");
+                }
+                else if (currentUser.Role == UserRole.Admin)
+                {
+                    var admin = new AdminUI.AdminUI(currentUser);
+                    await admin.Admin();
+                }
             }
         }
     }

@@ -1,4 +1,5 @@
 ﻿using ECommerce.Domain.Entities;
+using ECommerce.Domain.Enums;
 using ECommerce.Service.Interfaces;
 using ECommerce.Service.Services;
 
@@ -55,9 +56,99 @@ namespace ECommerce.Presentation.AdminUI
             }
         }
 
-        private Task Edit()
+        private async Task Edit()
         {
-            throw new NotImplementedException();
+            while (true)
+            {
+                Console.Write("Enter the id of the product you want to update, \"Q\" to exit: ");
+                int numid;
+                try
+                {
+                    numid = int.Parse(Console.ReadLine());
+                }
+                catch
+                {
+                    return;
+                }
+
+                var response = await userService.GetByIdAsync(numid);
+
+                if (response.StatusCode == 404)
+                {
+                    Console.WriteLine("There is no such user.");
+                    Console.Clear();
+                    continue;
+                }
+                var oldmodel = response.Result;
+                Console.WriteLine($"Id: {oldmodel.Id}");
+                Console.WriteLine($"Name: {oldmodel.FirstName} Lastname: {oldmodel.LastName}");
+                Console.WriteLine($"UserRole: {oldmodel.Role}, Username: {oldmodel.Username}, Password: {oldmodel.Password}");
+
+                Console.WriteLine();
+                Console.WriteLine("1. FirstName Update ");
+                Console.WriteLine("2. Lastname Update");
+                Console.WriteLine("3. UserRole Update");
+                Console.WriteLine("4. Username Update ");
+                Console.WriteLine("5. Password Update ");
+                Console.WriteLine("6.Return Main menu");
+                Console.WriteLine();
+                Console.Write("Enter the sequence of numbers separated by space to update: ");
+
+                int[] num = Array.ConvertAll(Console.ReadLine().Split(), int.Parse);
+
+                if (Array.IndexOf(num, 6) != -1)
+                {
+                    Console.Clear();
+                    return;
+                }
+
+                //Name Update 
+                if (Array.IndexOf(num, 1) != -1)
+                {
+                    Console.Write("Enter new Fistname: ");
+                    oldmodel.FirstName = Console.ReadLine();
+                    Console.Clear();
+                }
+
+                // Price update
+                if (Array.IndexOf(num, 2) != -1)
+                {
+                    Console.Write("Enter new Lastname: ");
+                    oldmodel.FirstName = Console.ReadLine(); 
+                    Console.Clear(); 
+                }
+
+                //discription update
+                if (Array.IndexOf(num, 3) != -1)
+                {
+                    Console.Write("Enter new role for the user: ");
+                    Console.WriteLine("1. Customer\n" +
+                        "2. Merchant\n" +
+                        "3. Admin\n");
+                    int rolenumber = int.Parse(Console.ReadLine());
+
+                    oldmodel.Role = (UserRole)((rolenumber - 1) * 10);
+                    Console.Clear();
+                }
+
+                //Catecgoryid update
+                if (Array.IndexOf(num, 4) != -1)
+                {
+                    Console.Write("Enter new username for the user: ");
+                    oldmodel.Username = Console.ReadLine();
+
+                    Console.Clear();
+                }
+
+                // Deliver update
+                if (Array.IndexOf(num, 5) != -1)
+                {
+                    Console.Write("Enter new password for the user: ");
+                    oldmodel.Username = Console.ReadLine();
+
+                    Console.Clear();
+                }
+            }
         }
 
         private async Task ChatAsync()

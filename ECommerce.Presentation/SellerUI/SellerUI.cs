@@ -1,17 +1,14 @@
 ﻿using ECommerce.Domain.Entities;
 using ECommerce.Domain.Enums;
-using ECommerce.Service.Helpers;
 using ECommerce.Service.Interfaces;
 using ECommerce.Service.Services;
+using System.Reflection;
 
 namespace ECommerce.Presentation.SellerUI
 {
     public class SellerUI
     {
         private IProductService productService = new ProductService();
-        private IUserService userService = new UserService();
-        private IChatService chatService = new ChatService();
-
         private User user;
         public SellerUI(User user1)
         {
@@ -124,77 +121,6 @@ namespace ECommerce.Presentation.SellerUI
                     {
                         var response = await userService.GetAsync(x => x.Username == username);
 
-                        if (response.StatusCode == 404)
-                        {
-                            Console.WriteLine("Username not found");
-                            goto getusername;
-                        }
-
-                        Console.Write("Type a message: ");
-                        string message = Console.ReadLine();
-
-                        await chatService.SendMessageAsync(new ChatInfo()
-                        {
-                            SenderId = user.Id,
-                            RespondentId = response.Result.Id,
-                            Message = message
-                        });
-                        Console.WriteLine("Successfully sent.");
-                    }
-                }
-                else if (choice == "1")
-                {
-                    var response = await chatService.GetAll(x => x.SenderId == user.Id || x.RespondentId == user.Id);
-                    var allMessages = response.Result;
-
-                    foreach (var message in allMessages)
-                    {
-                        if (user.Id == message.SenderId)
-                        {
-                            var r = await userService.GetByIdAsync(message.RespondentId);
-                            string fromUsername;
-                            if (r.StatusCode == 404)
-                            {
-                                fromUsername = "DELETED";
-                            }
-                            else
-                            {
-                                fromUsername = r.Result.Username;
-                            }
-                            Console.WriteLine($"From: YOU\n" +
-                                $"To: {fromUsername}\n" +
-                                $"Message: {message.Message} \n" +
-                                $"Date: {message.CreatedAt} \n");
-                        }
-                        else
-                        {
-                            var r = await userService.GetByIdAsync(message.SenderId);
-                            string toUsername;
-                            if (r.StatusCode == 404)
-                            {
-                                toUsername = "DELETED";
-                            }
-                            else
-                            {
-                                toUsername = r.Result.Username;
-                            }
-                            Console.WriteLine($"From: {toUsername}\n" +
-                                $"To: YOU\n" +
-                                $"Message: {message.Message}\n" +
-                                $"Date: {message.CreatedAt}\n");
-                        }
-
-                        
-                    }
-                }
-                else
-                {
-                    Console.Clear();
-                    break;
-                }
-                Console.Write("Press any key to continue...");
-                Console.ReadKey();
-            }
         }
 
         public async Task CreateProductAsync()
@@ -435,16 +361,15 @@ namespace ECommerce.Presentation.SellerUI
 
             if (choice1 == "1")
             {
-                //var response = await productService.GetAllAsync(x => x.OwnerId == user.Id);
                 var response = await productService.GetAllAsync(x => x.OwnerId == user.Id);
                 var models = response.Result;
 
                 foreach (var item in models)
                 {
-                    Console.WriteLine("====================================================================================");
-                    Console.WriteLine($"Id: {item.Id} Name: {item.Name} Description: {item.Description} \n" +
-                        $"Price: {item.Price} QRCode: {item.QRCode} Category: {item.Category} Can we deliver: {item.CanDeliver}\n" +
-                        $"CreateAtTime: {item.CreatedAt}");
+                        Console.WriteLine("====================================================================================");
+                        Console.Write($"Id: {item.Id} Name: {item.Name} Description: {item.Description} \n" +
+                            $"Price: {item.Price} QRCode: {item.QRCode} Category: {item.Category} Can we deliver: {item.CanDeliver}\n" +
+                            $"CreateAtTime: {item.CreatedAt}");
                 }
 
             }
@@ -464,7 +389,7 @@ namespace ECommerce.Presentation.SellerUI
                 Console.Write("Enter the number of the  category: ");
                 int choice = int.Parse(Console.ReadLine());
 
-                var model = await productService.GetAllAsync(x => x.OwnerId == user.Id);
+                var model = await productService.GetAllAsync();
                 if (model.StatusCode == 404)
                 {
                     Console.WriteLine(model.Message);

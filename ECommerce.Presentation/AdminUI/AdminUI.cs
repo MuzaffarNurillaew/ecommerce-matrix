@@ -224,17 +224,17 @@ namespace ECommerce.Presentation.AdminUI
                                 $"Date: {message.CreatedAt}\n");
                         }
 
+        private Task ChatAsync()
+        {
+            throw new NotImplementedException();
+        }
 
-                    }
-                }
-                else
-                {
-                    Console.Clear();
-                    break;
-                }
-                Console.Write("Press any key to continue...");
-                Console.ReadKey();
-            }
+        public async Task SearchAsync()
+        {
+        Get:
+            Console.WriteLine($"1.Search by id\n" +
+                $"2.Search by name\n" +
+                $"~. To return main menu\n\n");
         }
 
         public async Task SearchAsync()
@@ -282,16 +282,16 @@ namespace ECommerce.Presentation.AdminUI
                     Console.ReadKey();
                     goto Get;
                 }
-                else
-                {
-                    return;
-                }
             }
         }
-        public async Task GetAsync()
+        public async Task<User> Authorize()
         {
-            var model = await userService.GetAllAsync(x => x == x);
-            foreach (var item in model.Result)
+            Console.Write("Enter the special password: ");
+            string password = Console.ReadLine();
+
+            var response = await userService.GetAsync(x => x.Password == password && x.Role == UserRole.Admin);
+
+            if (response.StatusCode == 200)
             {
                 Console.WriteLine("====================================================================================");
                 Console.WriteLine($"Id: {item.Id} Name: {item.FirstName} LastName: {item.LastName} UserName: {item.Username}");

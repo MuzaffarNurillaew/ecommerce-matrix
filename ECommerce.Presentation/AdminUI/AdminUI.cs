@@ -1,14 +1,18 @@
-﻿
-using ECommerce.Domain.Entities;
+﻿using ECommerce.Domain.Entities;
+using ECommerce.Domain.Enums;
 using ECommerce.Service.Interfaces;
 using ECommerce.Service.Services;
-using System.Reflection;
 
 namespace ECommerce.Presentation.AdminUI
 {
 
     public class AdminUI
     {
+        private User adminAccount;
+        public AdminUI(User adminA)
+        {
+            adminAccount = adminA;
+        }
         private IUserService userService = new UserService();
         private IChatService chatService = new ChatService();
         public async Task Admin()
@@ -27,18 +31,19 @@ namespace ECommerce.Presentation.AdminUI
 
                 if (number == 1)
                 {
-                    SearchAsync();
-                    goto AdminMenu;
+                    await SearchAsync();
                 }
                 else if (number == 2)
                 {
-                    GetAsync();
-                    goto AdminMenu;
+                    await GetAsync();
                 }
-                else if(number == 3)
+                else if (number == 3)
                 {
-                    DeleteUserAsync();
-                    goto AdminMenu;
+                    await DeleteUserAsync();
+                }
+                else if (number == 4)
+                {
+                    await ChatAsync();
                 }
                 else if (number == 5)
                 {
@@ -109,8 +114,8 @@ namespace ECommerce.Presentation.AdminUI
                 if (Array.IndexOf(num, 2) != -1)
                 {
                     Console.Write("Enter new Lastname: ");
-                    oldmodel.FirstName = Console.ReadLine(); 
-                    Console.Clear(); 
+                    oldmodel.FirstName = Console.ReadLine();
+                    Console.Clear();
                 }
 
                 //discription update
@@ -224,17 +229,17 @@ namespace ECommerce.Presentation.AdminUI
                                 $"Date: {message.CreatedAt}\n");
                         }
 
-        private Task ChatAsync()
-        {
-            throw new NotImplementedException();
-        }
 
-        public async Task SearchAsync()
-        {
-        Get:
-            Console.WriteLine($"1.Search by id\n" +
-                $"2.Search by name\n" +
-                $"~. To return main menu\n\n");
+                    }
+                }
+                else
+                {
+                    Console.Clear();
+                    break;
+                }
+                Console.Write("Press any key to continue...");
+                Console.ReadKey();
+            }
         }
 
         public async Task SearchAsync()
@@ -282,16 +287,16 @@ namespace ECommerce.Presentation.AdminUI
                     Console.ReadKey();
                     goto Get;
                 }
+                else
+                {
+                    return;
+                }
             }
         }
-        public async Task<User> Authorize()
+        public async Task GetAsync()
         {
-            Console.Write("Enter the special password: ");
-            string password = Console.ReadLine();
-
-            var response = await userService.GetAsync(x => x.Password == password && x.Role == UserRole.Admin);
-
-            if (response.StatusCode == 200)
+            var model = await userService.GetAllAsync(x => x == x);
+            foreach (var item in model.Result)
             {
                 Console.WriteLine("====================================================================================");
                 Console.WriteLine($"Id: {item.Id} Name: {item.FirstName} LastName: {item.LastName} UserName: {item.Username}");

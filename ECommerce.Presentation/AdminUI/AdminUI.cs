@@ -1,18 +1,14 @@
-﻿using ECommerce.Domain.Entities;
-using ECommerce.Domain.Enums;
+﻿
+using ECommerce.Domain.Entities;
 using ECommerce.Service.Interfaces;
 using ECommerce.Service.Services;
+using System.Reflection;
 
 namespace ECommerce.Presentation.AdminUI
 {
 
     public class AdminUI
     {
-        private User adminAccount;
-        public AdminUI(User adminA)
-        {
-            adminAccount = adminA;
-        }
         private IUserService userService = new UserService();
         private IChatService chatService = new ChatService();
         public async Task Admin()
@@ -31,19 +27,18 @@ namespace ECommerce.Presentation.AdminUI
 
                 if (number == 1)
                 {
-                    await SearchAsync();
+                    SearchAsync();
+                    goto AdminMenu;
                 }
                 else if (number == 2)
                 {
-                    await GetAsync();
+                    GetAsync();
+                    goto AdminMenu;
                 }
-                else if (number == 3)
+                else if(number == 3)
                 {
-                    await DeleteUserAsync();
-                }
-                else if (number == 4)
-                {
-                    await ChatAsync();
+                    DeleteUserAsync();
+                    goto AdminMenu;
                 }
                 else if (number == 5)
                 {

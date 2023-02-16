@@ -1,4 +1,3 @@
-﻿using ECommerce.Domain.Entities;
 using ECommerce.Domain.Enums;
 using ECommerce.Service.Interfaces;
 using ECommerce.Service.Services;
@@ -105,10 +104,6 @@ namespace ECommerce.Presentation.CustomerUI
             int number = int.Parse(Console.ReadLine());
             if (number == 1)
             {
-                Console.Write("Enter new name: ");
-                userperson.FirstName = Console.ReadLine();
-                goto myprofil;
             }
-        }
     }
 }

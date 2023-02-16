@@ -61,7 +61,65 @@ namespace ECommerce.Presentation.SellerUI
                 {
                     await DeleteProductAsync();
                 }
+                else if (number == 6)
+                {
+                    await ChatAsync();
+                }
+                else if (number == 7)
+                {
+                    await RecommendAsync();
+                }
+                else if (number == 8)
+                {
+                    return;
+                }
             }
+
+        }
+
+        private Task RecommendAsync()
+        {
+            throw new NotImplementedException();
+        }
+
+        private async Task ChatAsync()
+        {
+            while (true)
+            {
+                Console.Clear();
+
+                Console.Write("1. Xabarlarni ko'rish.\n" +
+                    "2. Xabar yozish.\n" +
+                    "~ Exit.\n\n" +
+                    "Your choice: ");
+                string choice = Console.ReadLine();
+                if (choice == "2")
+                {
+                getusername:
+                    Console.Write("Enter the username of user to send message, or \"MATRIX\" to chat with admin: ");
+                    string username = Console.ReadLine();
+
+                    if (username == "MATRIX")
+                    {
+                        var rAdmin = await userService.GetAllAsync(x => x.Role == UserRole.Admin);
+                        var admins = rAdmin.Result;
+                        
+                        Console.Write("Type a message: ");
+                        string message = Console.ReadLine();
+
+                        foreach (var admin in admins)
+                        {
+                            await chatService.SendMessageAsync(new ChatInfo()
+                            {
+                                SenderId = user.Id,
+                                RespondentId = admin.Id,
+                                Message = message
+                            });
+                        }
+                    }
+                    else
+                    {
+                        var response = await userService.GetAsync(x => x.Username == username);
 
         }
 
